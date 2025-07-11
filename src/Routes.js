@@ -20,6 +20,8 @@ import RfidMaster from './Pages/Master/RfidMaster/RfidMaster';
 import ScheduleMaster from './Pages/Master/ScheduleMaster/ScheduleMaster';
 import OmrUpload1 from './Pages/Master/OmrUpload1/OmrUpload1';
 import StudentMaster from './Pages/Master/StudentMaster/StudentMaster';
+import ParentMaster from './Pages/Master/ParentMaster/ParentMaster';
+import ParentMasterForm from './Pages/Master/ParentMaster/ParentMasterForm';
 
 const routes = [
     { path: '/', exact: true, name: 'Login', element: Login },
@@ -45,5 +47,7 @@ const routes = [
     { path: '/scheduleMaster', name: 'ScheduleMaster', element: ScheduleMaster },
     { path: '/omrUpload1', name: 'OmrUpload1', element: OmrUpload1 },
     { path: '/studentMaster', name: 'Student Master', element: StudentMaster },
+     { path: '/parentMaster', name: 'Parent Master', element: ParentMaster },
+     { path: '/parentMasterForm', name: 'Parent Master Form', element: ParentMasterForm },
 ]
 export default routes

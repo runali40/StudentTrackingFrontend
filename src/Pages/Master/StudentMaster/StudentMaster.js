@@ -2,89 +2,79 @@ import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { Add, Delete, Edit, Height } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
-import { addParameter, deleteParameter, getAllParameterMasterData, getParameterMasterData } from "../../../Components/Api/ParameterMasterApi";
+import { addParameter, deleteParameter, getallStudentMasterData, getParameterMasterData } from "../../../Components/Api/ParameterMasterApi";
 import { Cursor } from "react-bootstrap-icons";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import {
     toast
 } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { AddStudentApi, getAllStudentApi, getStudentApi, deleteStudentApi } from "../../../Components/Api/StudentApi";
 
 const StudentMaster = () => {
     const navigate = useNavigate();
-    const [allParameter, setAllParameter] = useState([]);
+    const [allStudent, setAllStudent] = useState([]);
     const [searchData, setSearchData] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [selectedItemsPerPage, setSelectedItemsPerPage] = useState(10);
     const [showModal, setShowModal] = useState(false);
 
-    const [parameterName, setParameterName] = useState("");
-    const [parameterCode, setParameterCode] = useState("");
+    const [studentName, setStudentName] = useState("");
+    const [studentClass, setStudentClass] = useState("");
+    const [section, setSection] = useState("");
+    const [parentName, setParentName] = useState("");
+    const [watchId, setWatchId] = useState("");
+    const [location, setLocation] = useState("");
     const [active, setActive] = useState(true);
     const [toggleActive, setToggleActive] = useState(true);
-    const [parameterId, setParameterId] = useState("");
-    const [pId, setPId] = useState("")
+    const [sId, setSId] = useState("")
+
     const headerCellStyle = {
         backgroundColor: "#036672",
         color: "#fff",
     };
-
-    // const handleClose = () => setShowModal(false);
-    // const handleShow = () => setShowModal(true);
     const handleShow = () => {
         setShowModal(true);
+        resetForm()
     };
 
     const handleClose = () => setShowModal(false);
 
-    // useEffect(() => {
-    //     getAllData();
-    // }, [currentPage, itemsPerPage, toggleActive, active]);
+    useEffect(() => {
+        getAllStudent();
+    }, [currentPage, itemsPerPage, toggleActive, active]);
 
-    const getAllData = () => {
-        getAllParameterMasterData(active, toggleActive).then((data) => {
-            setAllParameter(data)
-        }).catch((error) => {
-            console.log(error);
-        })
-    };
 
-    const addParameterMaster = async () => {
-        const UserId = localStorage.getItem('userId');
-        // const recruitId = localStorage.getItem("recruitId")
-        let data;
+    const getAllStudent = async () => {
+        const data = await getAllStudentApi(navigate);
+        console.log(data)
+        setAllStudent(data)
+    }
 
-        if (parameterCode === "") {
-            toast.warning(" Please enter parameter code!");
-        } else if (parameterName === "") {
-            toast.warning(" Please enter parameter name!");
-        } else {
-            data = {
-                UserId: UserId,
-                p_parametername: parameterName,
-                p_code: parameterCode,
-                p_isactive: active ? "1" : "2",
-            };
+    const getStudent = async (studentId) => {
+        const data = await getStudentApi(studentId, navigate);
+        console.log(data)
+        handleShow();
+        setStudentName(data.StudentName)
+        setParentName(data.ParentName)
+        setStudentClass(data.Class)
+        setWatchId(data.WatchId)
+        setSId(data.Id)
+    }
 
-            if (pId !== null && pId !== "") {
-                data.p_id = pId;
-            }
+    const AddStudentMaster = async () => {
+        const data = await AddStudentApi(studentName, studentClass, section, parentName, watchId, sId, navigate);
+        console.log(data)
+        handleClose();
+        getAllStudent();
+    }
 
-            try {
-                await addParameter(data);
-                await getAllData();
-                setParameterCode("");
-                setParameterName("");
-                handleClose();
-                resetForm();
-            } catch (error) {
-                console.error("Error adding parameter:", error);
-                // Handle error appropriately
-            }
-        }
-    };
-
+    const DeleteStudent = async (studentId) => {
+        const data = await deleteStudentApi(studentId, navigate);
+        console.log(data)
+        getAllStudent();
+    }
 
     const handleChange = (e) => {
         setSelectedItemsPerPage(parseInt(e.target.value));
@@ -92,56 +82,37 @@ const StudentMaster = () => {
         setCurrentPage(1);
     };
 
-
-    const getParameter = (pId) => {
-        handleShow();
-        getParameterMasterData(pId).then((data) => {
-            if (data) {
-                setParameterCode(
-                    data.p_code)
-                setParameterName(data.
-                    p_parametername)
-                setPId(data.p_id)
-            }
-        })
-    };
-
-    const handleParameterNameClick = (pId, parameterName) => {
-        navigate('/parameterValueMaster', { state: { pId, parameterName } });
-    }
-    const DeleteParameterMaster = (pId) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this parameter?");
-        if (!isConfirmed) return;
-        deleteParameter(pId).then(() => getAllData().then(setAllParameter));
-    }
-
     const resetForm = () => {
-        setParameterCode("");
-        setParameterName("");
-        setPId("");
+        setStudentName("");
+        setParentName("");
+        setStudentClass("");
+        setSection("");
+        setWatchId("");
+        setSId("");
     };
+
     const handleSearch = (e) => {
         const searchDataValue = e.target.value.toLowerCase();
         setSearchData(searchDataValue);
 
         if (searchDataValue.trim() === "") {
             // If search input is empty, fetch all data
-            getAllData();
+            getAllStudent();
         } else {
             // Filter data based on search input value
-            const filteredData = allParameter.filter(
-                (parameter) =>
-                    parameter.p_code.toLowerCase().includes(searchDataValue) ||
-                    parameter.p_parametername.toLowerCase().includes(searchDataValue)
+            const filteredData = allStudent.filter(
+                (student) =>
+                    student?.StudentName?.toLowerCase().includes(searchDataValue) ||
+                    student?.WatchId?.toLowerCase().includes(searchDataValue)
             );
-            setAllParameter(filteredData);
+            setAllStudent(filteredData);
             setCurrentPage(1);
         }
-    };
+    }
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = allParameter.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = allStudent.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <>
@@ -171,10 +142,10 @@ const StudentMaster = () => {
                                             <Button
                                                 // onClick={handleShow}
                                                 onClick={() => {
-                                                    setParameterCode("");
-                                                    setParameterName("");
-                                                    setParameterId("");
+
+                                                    setSId("");
                                                     handleShow();
+
                                                 }}
                                                 style={{ backgroundColor: "#1B5A90" }}
                                             >
@@ -240,50 +211,61 @@ const StudentMaster = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Raj</td>
-                                            <td>8th</td>
-                                            <td>A</td>
-                                            <td>1233454</td>
-                                            <td>abc</td>
-                                            <td className="text-center">
-                                                <div className="d-flex justify-content-center align-items-center gap-">
-                                                    <Edit
-                                                        className="text-success mr-2"
-                                                        type="button"
-                                                        // onClick={() => getParameter(data.p_id)}
-                                                        // style={{
-                                                        
-                                                        //     ...(data.p_isactive === "Inactive" && {
-                                                        //         opacity: 0.5,  
-                                                        //         cursor: "not-allowed",
-                                                        //     }),
-                                                        // }}
-                                                        // onClick={data.p_isactive === "Inactive" ? null : () => getParameter(data.p_id)}
-                                                    />
-                                                    <Delete
-                                                        className="text-danger"
-                                                        type="button"
-                                                        // onClick={() => DeleteParameterMaster(data.p_id)}
-                                                        style={{
-                                                            marginLeft: "0.5rem",
-                                                            opacity: 0.5, 
-                                                            cursor: 'not-allowed'  
-                                                        }}
-                                                       // Disables the icon
-                                                    />
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        {
+                                            currentItems.map((data, index) => {
+                                                return (
+                                                    <tr key={data.Id}>
+                                                        <td> {(currentPage - 1) * itemsPerPage + index + 1}</td>
+
+                                                        <td>
+                                                            {data.StudentName}
+                                                        </td>
+                                                        <td>{data.Class}</td>
+                                                        <td>{ }</td>
+                                                        <td>{data.WatchId}</td>
+                                                        <td>{data.ParentName}</td>
+                                                        <td className="text-center">
+                                                            <div className="d-flex justify-content-center align-items-center gap-">
+                                                                <Edit
+                                                                    className="text-success mr-2"
+                                                                    type="button"
+                                                                    // onClick={() => getParameter(data.p_id)}
+                                                                    //  style={{
+
+                                                                    //    ...(data.p_isactive === "Inactive" && {
+                                                                    //      opacity: 0.5, 
+                                                                    //      cursor: "not-allowed", 
+                                                                    //    }),
+                                                                    //  }}
+                                                                    //  onClick={data.p_isactive === "Inactive" ? null : () => getParameter(data.p_id)}
+                                                                    onClick={() => getStudent(data.Id)}
+                                                                />
+
+                                                                <Delete
+                                                                    className="text-danger"
+                                                                    type="button"
+                                                                    onClick={() => DeleteStudent(data.Id)}
+                                                                // style={{
+                                                                //     marginLeft: "0.5rem",
+                                                                //     opacity: 0.5,  // Makes the icon appear faded
+                                                                //     cursor: 'not-allowed'  // Changes cursor to indicate disabled state
+                                                                // }}
+                                                                // disabled={true}  // Disables the icon
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
                                     </tbody>
                                 </Table>
                                 <div className="row mt-4 mt-xl-3">
                                     <div className="col-lg-4 col-md-4 col-12 ">
                                         <h6 className="text-lg-start text-center">
                                             Showing {indexOfFirstItem + 1} to{" "}
-                                            {Math.min(indexOfLastItem, allParameter.length)} of{" "}
-                                            {allParameter.length} entries
+                                            {Math.min(indexOfLastItem, allStudent.length)} of{" "}
+                                            {allStudent.length} entries
                                         </h6>
                                     </div>
                                     <div className="col-lg-4 col-md-4 col-12"></div>
@@ -291,7 +273,7 @@ const StudentMaster = () => {
                                         <Pagination
                                             currentPage={currentPage}
                                             setCurrentPage={setCurrentPage}
-                                            allData={allParameter}
+                                            allData={allStudent}
                                             itemsPerPage={itemsPerPage}
                                         />
                                     </div>
@@ -318,15 +300,15 @@ const StudentMaster = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Student Name"
-                                        value={parameterCode}
-                                        // onChange={(e) => setParameterCode(e.target.value)}
-                                        maxLength={4} // Restrict input length to 10 characters
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (/^\d*$/.test(value)) {
-                                                setParameterCode(value);
-                                            }
-                                        }}
+                                        value={studentName}
+                                        onChange={(e) => setStudentName(e.target.value)}
+                                    // Restrict input length to 10 characters
+                                    // onChange={(e) => {
+                                    //     const value = e.target.value;
+                                    //     if (/^\d*$/.test(value)) {
+                                    //         setParameterCode(value);
+                                    //     }
+                                    // }}
                                     />
                                 </Form.Group>
                             </Col>
@@ -337,17 +319,17 @@ const StudentMaster = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Student Class"
-                                        value={parameterName}
-                                        // onChange={(e) => setParameterName(e.target.value)}
-                                        maxLength={50} // Restrict input to 50 characters
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            // Allow only alphabetic characters (letters and spaces)
-                                            if (/^[a-zA-Z\s]*$/.test(value)) {
-                                                setParameterName(value);
-                                            }
-                                        }
-                                        }
+                                        value={studentClass}
+                                        onChange={(e) => setStudentClass(e.target.value)}
+                                    // Restrict input to 50 characters
+                                    // onChange={(e) => {
+                                    //     const value = e.target.value;
+                                    //     // Allow only alphabetic characters (letters and spaces)
+                                    //     if (/^[a-zA-Z\s]*$/.test(value)) {
+                                    //         setStudentClass(value);
+                                    //     }
+                                    // }
+                                    // }
                                     />
                                 </Form.Group>
                             </Col>
@@ -363,15 +345,15 @@ const StudentMaster = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Section"
-                                        value={parameterCode}
-                                        // onChange={(e) => setParameterCode(e.target.value)}
-                                        maxLength={4} // Restrict input length to 10 characters
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (/^\d*$/.test(value)) {
-                                                setParameterCode(value);
-                                            }
-                                        }}
+                                        value={section}
+                                        onChange={(e) => setSection(e.target.value)}
+                                    // Restrict input length to 10 characters
+                                    // onChange={(e) => {
+                                    //     const value = e.target.value;
+                                    //     if (/^\d*$/.test(value)) {
+                                    //         setParameterCode(value);
+                                    //     }
+                                    // }}
                                     />
                                 </Form.Group>
                             </Col>
@@ -382,44 +364,44 @@ const StudentMaster = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Watch Id"
-                                        value={parameterName}
-                                        // onChange={(e) => setParameterName(e.target.value)}
+                                        value={watchId}
+                                        onChange={(e) => setWatchId(e.target.value)}
                                         maxLength={50} // Restrict input to 50 characters
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            // Allow only alphabetic characters (letters and spaces)
-                                            if (/^[a-zA-Z\s]*$/.test(value)) {
-                                                setParameterName(value);
-                                            }
-                                        }
-                                        }
+                                    // onChange={(e) => {
+                                    //     const value = e.target.value;
+                                    //     // Allow only alphabetic characters (letters and spaces)
+                                    //     if (/^[a-zA-Z\s]*$/.test(value)) {
+                                    //         setParameterName(value);
+                                    //     }
+                                    // }
+                                    // }
                                     />
                                 </Form.Group>
                             </Col>
                         </Row>
 
                     </Form>
-                     <Form>
+                    <Form>
                         <Row>
                             <Col xs={12} sm={12} md={6} lg={6} className="mt-2 mt-lg-0">
                                 <Form.Group className="mb-3" controlId="parameterCode">
-                                    <Form.Label className="fw-bold">Parent Info:</Form.Label>{" "}
+                                    <Form.Label className="fw-bold">Parent Name:</Form.Label>{" "}
                                     <span className="text-danger fw-bold">*</span>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter Parent Info"
-                                        value={parameterCode}
-                                        // onChange={(e) => setParameterCode(e.target.value)}
-                                        maxLength={4} // Restrict input length to 10 characters
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (/^\d*$/.test(value)) {
-                                                setParameterCode(value);
-                                            }
-                                        }}
+                                        placeholder="Enter Parent Name"
+                                        value={parentName}
+                                        onChange={(e) => setParentName(e.target.value)}
+                                    // Restrict input length to 10 characters
+                                    // onChange={(e) => {
+                                    //     const value = e.target.value;
+                                    //     if (/^\d*$/.test(value)) {
+                                    //         setParameterCode(value);
+                                    //     }
+                                    // }}
                                     />
                                 </Form.Group>
-                            </Col>                        
+                            </Col>
                         </Row>
                     </Form>
                 </Modal.Body>
@@ -427,18 +409,16 @@ const StudentMaster = () => {
                     <Button
                         style={{ backgroundColor: "#1B5A90" }}
                         onClick={() => {
-                            addParameterMaster();
+                            AddStudentMaster();
                         }}
                     >
                         Save
                     </Button>
-                    <Button variant="secondary" onClick={resetForm}>
+                    <Button variant="secondary" onClick={resetForm} >
                         Clear
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-
         </>
     );
 };
