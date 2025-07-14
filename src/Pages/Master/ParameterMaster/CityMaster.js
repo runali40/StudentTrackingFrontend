@@ -1,50 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { Add, Delete, Edit, Height, ArrowBack } from "@material-ui/icons";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { addParameterValue, deleteParameterValue, getAllParameterValueMasterData, getParameterValueMasterData } from "../../../Components/Api/ParameterValueMasterApi";
+import { Add, Delete, Edit, ArrowBack } from "@material-ui/icons";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import {
   toast
 } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { AddCityApi, DeleteCityApi, getAllCityApi, GetCityApi } from "../../../Components/Api/CityMasterApi";
 
-const ParameterValueMaster = () => {
+const CityMaster = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { pId, parameterName } = location.state || {};
-  const [allParameterValue, setAllParameterValue] = useState([]);
+  const { sId, stateName } = location.state || {};
+  const [allCity, setAllCity] = useState([]);
   const [searchData, setSearchData] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedItemsPerPage, setSelectedItemsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
 
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
-  const [parameterValueName, setParameterValueName] = useState("");
+  const [cityCode, setCityCode] = useState("")
+  const [cityName, setCityName] = useState("")
   const [active, setActive] = useState(true);
   const [toggleActive, setToggleActive] = useState(true);
-  const [parameterValueId, setParameterValueId] = useState("");
-  const [paraName, setParameterName] = useState("")
-  const [pvId, setPvId] = useState("")
-  // const { id, parameterId, parameterValueNamee } = useParams();
+  const [cId, setCId] = useState("")
+
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
 
   useEffect(() => {
-    getAllData();
+    getAllCity();
   }, [currentPage, itemsPerPage, toggleActive]);
 
-  const getAllData = () => {
-    getAllParameterValueMasterData(pId, active, toggleActive).then((data) => {
-      setAllParameterValue(data)
-    }).catch((error) => {
-      console.log(error)
-    })
-  };
+  const getAllCity = async () => {
+    const data = await getAllCityApi(sId, navigate);
+    console.log(data)
+    setAllCity(data)
+  }
+
+  const AddCityMaster = async () => {
+    const data = await AddCityApi(cityCode, cityName, sId, stateName, cId, navigate);
+    console.log(data)
+    handleClose();
+    getAllCity();
+    resetForm()
+  }
+
+    const getCity= async (cityId) => {
+      const data = await GetCityApi(cityId, navigate);
+      console.log(data)
+      handleShow();
+      setCityName(data.c_cityvalue)
+      setCityCode(data.c_code)
+      setCId(data.c_id)
+    }
+  
+    const DeleteCity = async (cityId) => {
+      const data = await DeleteCityApi(cityId, navigate);
+      console.log(data)
+      getAllCity();
+    }
 
   const handleChange = (e) => {
     setSelectedItemsPerPage(parseInt(e.target.value));
@@ -55,99 +73,36 @@ const ParameterValueMaster = () => {
   const handleClose = () => { setShowModal(false); resetForm() };
   const handleShow = () => setShowModal(true);
 
-  const addParameterValueMaster = async () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-    let data;
-    if (code === "") {
-      toast.warning(" Please enter code!");
-    } else if (parameterValueName === "") {
-      toast.warning(" Please enter name!");
-    } else {
-      data = {
-        userId: UserId,
-        pv_parameterid: pId,
-        pv_parametervalue: parameterValueName,
-        pv_code: code,
-        pv_parametername: parameterName,
-        pv_isactive: active ? "1" : "2",
-      };
-      if (pvId !== null && pvId !== "") {
-        data.pv_id = pvId;
-      }
-
-      // addParameterValue(data).then(() => {
-      //   getAllData().then(setAllParameterValue);
-      //   handleClose();
-      // })
-      try {
-        await addParameterValue(data);
-        await getAllData();;
-        handleClose();
-        resetForm();
-      } catch (error) {
-        console.error("Error adding parameter value:", error);
-        // Handle error appropriately
-      }
-    }
-  }
-
-  const GetParameterValue = (pvId) => {
-    handleShow();
-    getParameterValueMasterData(pvId).then((data) => {
-      if (data) {
-        setCode(
-          data.pv_code
-        )
-        setParameterValueName(data.
-          pv_parametervalue
-        )
-        setPvId(data.pv_id
-        )
-      }
-    })
-  };
-
-
-  const DeleteParameterValue = (pvId) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this parameter value?");
-    if (!isConfirmed) return;
-    deleteParameterValue(pvId).then(() => getAllData().then(setAllParameterValue));
-  }
-
   const handleSearch = (e) => {
     const searchDataValue = e.target.value.toLowerCase();
     setSearchData(searchDataValue);
 
     if (searchDataValue.trim() === "") {
       // If search input is empty, fetch all data
-      getAllData();
+      getAllCity();
     } else {
       // Filter data based on search input value
-      const filteredData = allParameterValue.filter(
-        (parameterValue) =>
-          parameterValue.pv_parametername.toLowerCase().includes(searchDataValue) ||
-          parameterValue.pv_code.toLowerCase().includes(searchDataValue) ||
-          parameterValue.pv_parametervalue.toLowerCase().includes(searchDataValue)
+      const filteredData = allCity.filter(
+        (city) =>
+          city.c_code.toLowerCase().includes(searchDataValue) ||
+          city.c_cityvalue.toLowerCase().includes(searchDataValue) ||
+          city.c_statename.toLowerCase().includes(searchDataValue)
 
       );
-      setAllParameterValue(filteredData);
+      setAllCity(filteredData);
       setCurrentPage(1);
     }
   };
 
   const resetForm = () => {
-    setParameterName("");
-    setCode("");
-    setName("");
-    setParameterValueName("");
-    setParameterValueId("");
-    setPvId("")
+    setCityCode("");
+    setCityName("");
+    setCId("")
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = allParameterValue.slice(
+  const currentItems = allCity.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
@@ -165,7 +120,7 @@ const ParameterValueMaster = () => {
                 <div className="row align-items-center">
                   <div className="col">
                     <h4 className="card-title fw-bold">
-                      Parameter Value Master
+                      City Master
                     </h4>
                   </div>
                   <div className="col-auto d-flex flex-wrap">
@@ -182,9 +137,7 @@ const ParameterValueMaster = () => {
                       <Button
                         // onClick={handleShow}
                         onClick={() => {
-                          setCode("");
-                          setName("");
-                          setParameterValueId("");
+                          resetForm();
                           handleShow();
                         }}
                         style={{ backgroundColor: "#1B5A90" }}
@@ -241,13 +194,13 @@ const ParameterValueMaster = () => {
                         Sr.No
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Code
+                        City Code
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Name
+                        City Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Parameter Name
+                        State Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
                         Status
@@ -258,34 +211,34 @@ const ParameterValueMaster = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {allParameterValue &&
+                    {allCity &&
                       currentItems
-                        .sort((a, b) => a.pv_code.localeCompare(b.pv_code))  // Sorting by pv_parametervalue
+                        .sort((a, b) => a.c_code.localeCompare(b.c_code))  // Sorting by pv_parametervalue
                         .map((data, index) => {
                           return (
-                            <tr key={data.pv_id}>
+                            <tr key={data.c_id}>
                               <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                              <td>{data.pv_code}</td>
-                              <td>{data.pv_parametername}</td>
-                              <td>{data.pv_parametervalue}</td>
-                              <td>{data.pv_isactive}</td>
+                              <td>{data.c_code}</td>
+                              <td>{data.c_cityvalue}</td>
+                              <td>{data.c_statename}</td>
+                              <td>{data.c_isactive}</td>
                               <td className="text-center">
                                 <div className="d-flex justify-content-center align-items-center gap-2">
                                   <Edit
                                     className="text-success mr-2"
                                     type="button"
-                                    // onClick={() => {
-                                    //   GetParameterValue(data.pv_id);
+                                    onClick={() => {
+                                      getCity(data.c_id);
 
-                                    // }}
-                                    style={{
-                                      // marginLeft: "0.5rem",
-                                      ...(data.pv_isactive === "Inactive" && {
-                                        opacity: 0.5,  // Makes the icon appear faded
-                                        cursor: "not-allowed", // Changes cursor to indicate disabled state
-                                      }),
                                     }}
-                                    onClick={data.pv_isactive === "Inactive" ? null : () => GetParameterValue(data.pv_id)}
+                                    // style={{
+                                     
+                                    //   ...(data.pv_isactive === "Inactive" && {
+                                    //     opacity: 0.5,  // Makes the icon appear faded
+                                    //     cursor: "not-allowed", // Changes cursor to indicate disabled state
+                                    //   }),
+                                    // }}
+                                    // onClick={data.pv_isactive === "Inactive" ? null : () => GetParameterValue(data.pv_id)}
                                   />
                                   {/* <Delete
                                     className="text-danger"
@@ -296,13 +249,13 @@ const ParameterValueMaster = () => {
                                   <Delete
                                     className="text-danger"
                                     type="button"
-                                    // onClick={() => DeleteParameterMaster(data.p_id)}
-                                    style={{
-                                      marginLeft: "0.5rem",
-                                      opacity: 0.5,  // Makes the icon appear faded
-                                      cursor: 'not-allowed'  // Changes cursor to indicate disabled state
-                                    }}
-                                    disabled={true}  // Disables the icon
+                                    onClick={() => DeleteCity(data.c_id)}
+                                    // style={{
+                                    //   marginLeft: "0.5rem",
+                                    //   opacity: 0.5,  // Makes the icon appear faded
+                                    //   cursor: 'not-allowed'  // Changes cursor to indicate disabled state
+                                    // }}
+                                    // disabled={true}  // Disables the icon
                                   />
                                 </div>
 
@@ -318,8 +271,8 @@ const ParameterValueMaster = () => {
                   <div className="col-lg-4 col-md-4 col-12">
                     <h6 className="text-lg-start text-center">
                       Showing {indexOfFirstItem + 1} to{" "}
-                      {Math.min(indexOfLastItem, allParameterValue.length)} of{" "}
-                      {allParameterValue.length} entries
+                      {Math.min(indexOfLastItem, allCity.length)} of{" "}
+                      {allCity.length} entries
                     </h6>
                   </div>
                   <div className="col-lg-4 col-md-4 col-12"></div>
@@ -327,7 +280,7 @@ const ParameterValueMaster = () => {
                     <Pagination
                       currentPage={currentPage}
                       setCurrentPage={setCurrentPage}
-                      allData={allParameterValue}
+                      allData={allCity}
                       itemsPerPage={itemsPerPage}
                     />
                   </div>
@@ -341,7 +294,7 @@ const ParameterValueMaster = () => {
       <Modal show={showModal} onHide={handleClose} size="md" backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="fw-bold">Add Parameter Value</h5>
+            <h5 className="fw-bold">Add City Master</h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -349,13 +302,13 @@ const ParameterValueMaster = () => {
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} className="mt-4 mt-lg-0">
                 <Form.Group className="mb-3" controlId="code">
-                  <Form.Label className="fw-bold"> Parameter Name:</Form.Label>{" "}
+                  <Form.Label className="fw-bold"> State Name:</Form.Label>{" "}
                   <span className="text-danger fw-bold">*</span>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Parameter Name"
-                    value={parameterName}
-                    onChange={(e) => setParameterName(e.target.value)}
+                    placeholder="Enter State Name"
+                    value={stateName}
+                    // onChange={(e) => setParameterName(e.target.value)}
                     required
                   />
                 </Form.Group>
@@ -364,18 +317,18 @@ const ParameterValueMaster = () => {
             <Row>
               <Col xs={12} sm={12} md={6} lg={6} className="mt-4 mt-lg-0">
                 <Form.Group className="mb-3" controlId="code">
-                  <Form.Label className="fw-bold"> Code:</Form.Label>{" "}
+                  <Form.Label className="fw-bold">City Code:</Form.Label>{" "}
                   <span className="text-danger fw-bold">*</span>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Code"
-                    value={code}
+                    placeholder="Enter City Code"
+                    value={cityCode}
                     // onChange={(e) => setCode(e.target.value)}
                     maxLength={4} // Restrict input length to 10 characters
                     onChange={(e) => {
                       const value = e.target.value;
                       if (/^\d*$/.test(value)) {
-                        setCode(value);
+                        setCityCode(value);
                       }
                     }}
                   />
@@ -383,19 +336,19 @@ const ParameterValueMaster = () => {
               </Col>
               <Col xs={12} sm={12} md={6} lg={6} className="mt-4 mt-lg-0">
                 <Form.Group className="mb-3" controlId="name">
-                  <Form.Label className="fw-bold">Name:</Form.Label>{" "}
+                  <Form.Label className="fw-bold">City Name:</Form.Label>{" "}
                   <span className="text-danger fw-bold">*</span>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Name"
-                    value={parameterValueName}
+                    placeholder="Enter City Name"
+                    value={cityName}
                     // onChange={(e) => setParameterValueName(e.target.value)}
                     maxLength={50} // Restrict input to 50 characters
                     onChange={(e) => {
                       const value = e.target.value;
                       // Allow only alphabetic characters (letters and spaces)
                       if (/^[a-zA-Z\s]*$/.test(value)) {
-                        setParameterValueName(value);
+                        setCityName(value);
                       }
                     }
                     }
@@ -417,7 +370,7 @@ const ParameterValueMaster = () => {
           <Button
             style={{ backgroundColor: "#1B5A90" }}
             onClick={() => {
-              addParameterValueMaster();
+              AddCityMaster();
             }}
           >
             Save
@@ -427,10 +380,8 @@ const ParameterValueMaster = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-
     </>
   );
 };
 
-export default ParameterValueMaster;
+export default CityMaster;

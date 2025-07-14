@@ -30,7 +30,7 @@ const RoleMasterForm = () => {
   // const storedToken = localStorage.getItem("UserCredential");
 
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
   useEffect(() => {
@@ -39,7 +39,7 @@ const RoleMasterForm = () => {
       getAllData()
         .then(() => {
           // Fetch duty names only after getAllData is complete
-          return GetAllRecruitment();
+          // return GetAllRecruitment();
 
         })
         .then(() => {
@@ -55,7 +55,7 @@ const RoleMasterForm = () => {
   }, []);
 
   useEffect(() => {
-    const recruitId = localStorage.getItem("recruitId");
+    // const recruitId = localStorage.getItem("recruitId");
     const UserId = localStorage.getItem("userId");
     if (isDataLoaded && rId) {
       apiClient({
@@ -63,7 +63,7 @@ const RoleMasterForm = () => {
         url: `RoleMaster/GetRoleById`.toString(),
         params: {
           UserId: UserId,
-          r_recruitid: recruitId,
+          // r_recruitid: recruitId,
           r_id: rId,
           r_isactive: active ? "1" : "2",
         },
@@ -72,16 +72,16 @@ const RoleMasterForm = () => {
           console.log(response, "get by id role master");
           const temp = response.data.data;
           // console.log(response.data.data[0].r_rolename);
-          if (temp.length !== 0) {
+          // if (temp.length !== 0) {
             setRoleName(temp[0].r_rolename);
             setRoleDescription(temp[0].r_description);
             setModule(temp[0].r_module);
             setNoOfUsers(temp[0].r_no_of_user);
             setMenuDataArray(temp);
-          }
-          else {
-            setMenuDataArray([]);
-          }
+          // }
+          // else {
+          //   setMenuDataArray([]);
+          // }
           const token1 = response.data.outcome.tokens;
           Cookies.set("UserCredential", token1, { expires: 7 });
         })
@@ -102,78 +102,8 @@ const RoleMasterForm = () => {
     }
   }, [isDataLoaded, rId]);
 
-  const GetAllRecruitment = () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-    const params = {
-      UserId: UserId,
-      RecruitId: recruitId,
-    };
-    return apiClient({
-      method: "get",
-      params: params,
-      url: `Recruitment/GetAll`.toString(),
-    })
-      .then((response) => {
-        console.log("get all recruitment", response.data.data);
-        const token1 = response.data.outcome.tokens;
-        Cookies.set("UserCredential", token1, { expires: 7 });
-        // setAllCandidates(response.data.data)
-        const temp = response.data.data;
-        const options = temp.map((data) => ({
-          value: data.Id,
-          label: `${data.place} / ${data.post}`,
-        }));
-        setAllRecruitment(options);
-      })
-      .catch((error) => {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.outcome
-        ) {
-          const token1 = error.response.data.outcome.tokens;
-          Cookies.set("UserCredential", token1, { expires: 7 });
-        }
-        console.log(error);
-        const errors = ErrorHandler(error);
-        toast.error(errors);
-      });
-  };
-
-  // const getAllData = () => {
-  //   const recruitId = localStorage.getItem("recruitId");
-  //   const UserId = localStorage.getItem("userId");
-  //   return apiClient({
-  //     method: "get",
-  //     url: `RoleMaster/GetMenu`.toString(),
-  //     params: {
-  //       UserId: UserId,
-  //       r_recruitid: recruitId,
-  //     },
-  //   })
-  //     .then((response) => {
-  //       console.log("response screens", response.data.data);
-  //       setAllScreens(response.data.data);
-  //       const token1 = response.data.outcome.tokens;
-  //       Cookies.set("UserCredential", token1, { expires: 7 });
-  //     })
-  //     .catch((error) => {
-  //       if (
-  //         error.response &&
-  //         error.response.data &&
-  //         error.response.data.outcome
-  //       ) {
-  //         const token1 = error.response.data.outcome.tokens;
-  //         Cookies.set("UserCredential", token1, { expires: 7 });
-  //       }
-  //       console.log(error);
-  //       const errors = ErrorHandler(error);
-  //       toast.error(errors);
-  //     });
-  // };
   const getAllData = () => {
-    const recruitId = localStorage.getItem("recruitId");
+    // const recruitId = localStorage.getItem("recruitId");
     const UserId = localStorage.getItem("userId");
 
     // Prevent API call if recruitId is null or empty
@@ -187,16 +117,16 @@ const RoleMasterForm = () => {
       url: `RoleMaster/GetMenu`,
       params: {
         UserId: UserId,
-        r_recruitid: recruitId,
+        // r_recruitid: recruitId,
       },
     })
       .then((response) => {
         console.log("response screens", response.data.data);
-        if (!recruitId === "null") {
-          setAllScreens(response.data.data);
+        // if (!recruitId === "null") {
+        //   setAllScreens(response.data.data);
 
-        }
-
+        // }
+        setAllScreens(response.data.data);
         const token1 = response.data.outcome.tokens;
         Cookies.set("UserCredential", token1, { expires: 7 });
       })
@@ -211,90 +141,7 @@ const RoleMasterForm = () => {
       });
   };
 
-  const handleRecruitmentChange = async (selected) => {
-    try {
-      const selectedValue = selected;
-      setRecruitmentValue(selectedValue);
-      console.log(selectedValue.value, "selected value");
-
-      localStorage.setItem("recruitId", selectedValue.value);
-      const recruitId = localStorage.getItem("recruitId");
-      const UserId = localStorage.getItem("userId");
-
-      const response = await apiClient({
-        method: "get",
-        url: `GetWebMenu/GetMenu`,
-        params: {
-          UserId: UserId,
-          RecruitId: recruitId,
-        },
-      });
-
-      console.log("response screens", response.data.data);
-      setAllScreens(response.data.data);
-
-      const token1 = response.data.outcome.tokens;
-      Cookies.set("UserCredential", token1, { expires: 7 });
-
-      await getIdWithRecruitId(); // Await this function properly
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.outcome) {
-        const token1 = error.response.data.outcome.tokens;
-        Cookies.set("UserCredential", token1, { expires: 7 });
-      }
-      console.log(error);
-      const errors = ErrorHandler(error);
-      toast.error(errors);
-    }
-  };
-
-  const getIdWithRecruitId = () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-
-    apiClient({
-      method: "get",
-      url: `RoleMaster/GetRoleById`.toString(),
-      params: {
-        UserId: UserId,
-        r_recruitid: recruitId,
-        r_id: rId,
-        r_isactive: active ? "1" : "2",
-      },
-    })
-      .then((response) => {
-        console.log(response, "get by id role master");
-        const temp = response.data.data;
-        // console.log(response.data.data[0].r_rolename);
-        if (temp.length !== 0) {
-          setRoleName(temp[0].r_rolename);
-          setRoleDescription(temp[0].r_description);
-          setModule(temp[0].r_module);
-          setNoOfUsers(temp[0].r_no_of_user);
-          setMenuDataArray(temp);
-        }
-        else {
-          setMenuDataArray([]);
-        }
-        const token1 = response.data.outcome.tokens;
-        Cookies.set("UserCredential", token1, { expires: 7 });
-      })
-
-      .catch((error) => {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.outcome
-        ) {
-          const token1 = error.response.data.outcome.tokens;
-          Cookies.set("UserCredential", token1, { expires: 7 });
-        }
-        console.log(error);
-        const errors = ErrorHandler(error);
-        toast.error(errors);
-      });
-
-  }
+  
   const handleCheckboxChange = (event, menuid) => {
     const { checked, id } = event.target;
     let newData = [...menuDataArray];
@@ -427,14 +274,14 @@ const RoleMasterForm = () => {
   };
 
   const addRoleMaster = () => {
-    const recruitId = localStorage.getItem("recruitId");
+    // const recruitId = localStorage.getItem("recruitId");
     const UserId = localStorage.getItem("userId");
 
-    if (!recruitmentValue) {
-      toast.warning("Please select recruitment!");
-      return;
+    // if (!recruitmentValue) {
+    //   toast.warning("Please select recruitment!");
+    //   return;
 
-    }
+    // }
     if (roleName === "" || menuDataArray.length === 0) {
       toast.warning("Please fill data in all fields!");
       return;
@@ -442,7 +289,7 @@ const RoleMasterForm = () => {
 
     let data = {
       userId: UserId,
-      r_recruitid: recruitId,
+      // r_recruitid: recruitId,
       r_rolename: roleName,
       r_description: roleDescription,
       r_module: module,
@@ -453,7 +300,7 @@ const RoleMasterForm = () => {
 
     if (rId !== null && rId !== "") {
       data.r_id = rId;
-      data.r_recruitid = recruitId;
+      // data.r_recruitid = recruitId;
     }
 
     // Log data size
@@ -516,20 +363,7 @@ const RoleMasterForm = () => {
                   </div>
                   <div className="col-auto d-flex flex-wrap">
                     <div className="me-2 my-auto">
-                      <Select
-                        value={recruitmentValue}
-                        onChange={handleRecruitmentChange}
-                        options={allRecruitment}
-                        placeholder="Select Recruitment"
-                        styles={{
-                          control: (provided) => ({
-                            ...provided,
-                            // width: "100%", // Adjust width as needed
-                            minWidth: "200px", // Set a fixed minimum width
-                            maxWidth: "200px",
-                          }),
-                        }}
-                      />
+
                     </div>
 
                     <div

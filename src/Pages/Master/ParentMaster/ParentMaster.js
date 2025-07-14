@@ -3,10 +3,9 @@ import { Table, Button } from "react-bootstrap";
 import { Add, Delete, Edit, } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../Components/Utils/Pagination";
-import { deleteDutyMaster, getallParentData } from "../../../Components/Api/DutyMasterApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getAllParentApi } from "../../../Components/Api/ParentMasterApi";
+import { deleteParentIdApi, getAllParentApi } from "../../../Components/Api/ParentMasterApi";
 
 const ParentMaster = () => {
   const navigate = useNavigate();
@@ -18,11 +17,9 @@ const ParentMaster = () => {
   const [active, setActive] = useState(true);
 
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
-
-
 
   useEffect(() => {
     getAllParent();
@@ -34,35 +31,40 @@ const ParentMaster = () => {
     console.log(data)
     setAllParent(data)
   }
+
   const handleChange = (e) => {
     setSelectedItemsPerPage(parseInt(e.target.value));
     setItemsPerPage(parseInt(e.target.value));
     setCurrentPage(1);
   };
 
-  const GetDutyMaster = (dId) => {
-    navigate('/dutyMasterForm', { state: { dId } });
+  const getParentData = (parentId) => {
+    navigate('/parentMasterForm', { state: { parentId } });
   };
 
+  const DeleteParentData = async (parentId) => {
+    const data = await deleteParentIdApi(parentId, navigate);
+    console.log(data)
+    getAllParent();
+  }
 
+  const handleSearch = (e) => {
+    const searchDataValue = e.target.value.toLowerCase();
+    setSearchData(searchDataValue);
 
-  // const handleSearch = (e) => {
-  //   const searchDataValue = e.target.value.toLowerCase();
-  //   setSearchData(searchDataValue);
-
-  //   if (searchDataValue.trim() === "") {
-  //     getAllParent();
-  //   } else {
-  //     const filteredData = allParent.filter(
-  //       (duty) =>
-  //         duty.d_dutyname.toLowerCase().includes(searchDataValue) ||
-  //         duty.d_description.toLowerCase().includes(searchDataValue)
-  //     );
-  //     setallParent(filteredData);
-  //     setCurrentPage(1);
-  //   }
-  // };
-
+    if (searchDataValue.trim() === "") {
+      getAllParent();
+    } else {
+      const filteredData = allParent.filter(
+        (parent) =>
+          parent.FisrtName.toLowerCase().includes(searchDataValue) ||
+          parent.LastName.toLowerCase().includes(searchDataValue) ||
+          parent.ChildName.toLowerCase().includes(searchDataValue)
+      );
+      setAllParent(filteredData);
+      setCurrentPage(1);
+    }
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -130,7 +132,7 @@ const ParentMaster = () => {
                       className="form-control"
                       placeholder="Search here"
                       value={searchData}
-                      // onChange={handleSearch}
+                      onChange={handleSearch}
                     />
                   </div>
                 </div>
@@ -142,19 +144,31 @@ const ParentMaster = () => {
                         Sr.No
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Duty Name
+                        First Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Description
+                        Last Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        No of Users
+                        Email Id
                       </th>
-                      {/* <th scope="col" style={headerCellStyle}>
-                        Module
-                      </th> */}
                       <th scope="col" style={headerCellStyle}>
-                        Menu Name
+                        Mobile No
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Student Name
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Address
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        City
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        State
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Pincode
                       </th>
                       <th scope="col" style={headerCellStyle}>
                         Status
@@ -166,32 +180,34 @@ const ParentMaster = () => {
                   </thead>
                   <tbody>
                     {currentItems.map((data, index) => (
-                      <tr key={data.d_id}>
-                        {/* <td><div className="form-check">
-                          <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        </div></td> */}
+                      <tr key={data.Id}>
                         <td>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
-                        <td>{data.d_dutyname}</td>
-                        <td>{data.d_description}</td>
-                        <td>{data.d_no_of_user}</td>
-                        {/* <td>{data.d_module}</td> */}
-                        <td>{data.m_menuname}</td>
-                        <td>{data.d_isactive}</td>
+                        <td>{data.FisrtName}</td>
+                        <td>{data.LastName}</td>
+                        <td>{data.EmailId}</td>
+                        <td>{data.MobileNo}</td>
+                        <td>{data.ChildName}</td>
+                        <td>{data.Address}</td>
+                        <td>{data.City}</td>
+                        <td>{data.State}</td>
+                        <td>{data.PinCode}</td>
+                        <td>{data.Isactive === "1" ? "Active" : "Inactive"}</td>
                         <td>
                           <div className="d-flex "><Edit
                             className="text-success mr-2"
                             type="button"
                             // onClick={() => GetDutyMaster(data.d_id)}
-                            style={{
-                              // marginLeft: "0.5rem",
-                              ...(data.d_isactive === "Inactive" && {
-                                opacity: 0.5,  // Makes the icon appear faded
-                                cursor: "not-allowed", // Changes cursor to indicate disabled state
-                              }),
-                            }}
-                            onClick={data.d_isactive === "Inactive" ? null : () => GetDutyMaster(data.d_id)}
+                            // style={{
+
+                            //   ...(data.d_isactive === "Inactive" && {
+                            //     opacity: 0.5, 
+                            //     cursor: "not-allowed",
+                            //   }),
+                            // }}
+                            onClick={() => getParentData(data.Id)}
+                          // onClick={data.d_isactive === "Inactive" ? null : () => GetDutyMaster(data.d_id)}
 
                           />
                             <Delete
@@ -199,14 +215,15 @@ const ParentMaster = () => {
                               type="button"
                               // style={{ marginLeft: "0.5rem" }}
                               // onClick={() => handleDelete(data.d_id)}
-                              style={{
-                                marginLeft: "0.5rem",
-                                ...(data.d_isactive === "Inactive" && {
-                                  opacity: 0.5,  // Makes the icon appear faded
-                                  cursor: "not-allowed", // Changes cursor to indicate disabled state
-                                }),
-                              }}
-                              // onClick={data.d_isactive === "Inactive" ? null : () => handleDelete(data.d_id)}
+                              // style={{
+                              //   marginLeft: "0.5rem",
+                              //   ...(data.d_isactive === "Inactive" && {
+                              //     opacity: 0.5,  
+                              //     cursor: "not-allowed", 
+                              //   }),
+                              // }}
+                              onClick={() => DeleteParentData(data.Id)}
+                            // onClick={data.d_isactive === "Inactive" ? null : () => handleDelete(data.d_id)}
                             /> </div>
 
                         </td>

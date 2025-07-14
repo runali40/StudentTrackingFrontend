@@ -5,8 +5,8 @@ import RoleMasterForm from './Pages/Master/RoleMaster/RoleMasterForm';
 import RoleMaster from './Pages/Master/RoleMaster/RoleMaster';
 import DutyMaster from './Pages/Master/DutyMaster/DutyMaster';
 import DutyMasterForm from './Pages/Master/DutyMaster/DutyMasterForm';
-import ParameterMaster from './Pages/Master/ParameterMaster/ParameterMaster';
-import ParameterValueMaster from './Pages/Master/ParameterMaster/ParameterValueMaster';
+import ParameterMaster from './Pages/Master/ParameterMaster/StateMaster';
+import ParameterValueMaster from './Pages/Master/ParameterMaster/CityMaster';
 import TableComponent from './Pages/DataTable';
 import DocumentMaster from './Pages/Master/DocumentMaster/DocumentMaster';
 import DocumentMasterForm from './Pages/Master/DocumentMaster/DocumentMasterForm';
@@ -22,6 +22,8 @@ import OmrUpload1 from './Pages/Master/OmrUpload1/OmrUpload1';
 import StudentMaster from './Pages/Master/StudentMaster/StudentMaster';
 import ParentMaster from './Pages/Master/ParentMaster/ParentMaster';
 import ParentMasterForm from './Pages/Master/ParentMaster/ParentMasterForm';
+import StateMaster from './Pages/Master/ParameterMaster/StateMaster';
+import CityMaster from './Pages/Master/ParameterMaster/CityMaster';
 
 const routes = [
     { path: '/', exact: true, name: 'Login', element: Login },
@@ -34,8 +36,8 @@ const routes = [
     { path: '/dutyMasterForm', name: 'Duty Master Form', element: DutyMasterForm },
     { path: '/documentMaster', name: 'Document Master', element: DocumentMaster },
     { path: '/documentMasterForm', name: 'Document Master Form', element: DocumentMasterForm },
-    { path: '/parameterMaster', name: 'Parameter Master', element: ParameterMaster },
-    { path: '/parameterValueMaster', name: 'Parameter Value Master', element: ParameterValueMaster },
+    { path: '/stateMaster', name: 'State Master', element: StateMaster },
+    { path: '/cityMaster', name: 'City Master', element: CityMaster },
     { path: '/dataTable', name: 'DataTable', element: TableComponent },
     { path: '/omrMaster', name: 'OMR Master', element: OmrMaster },
     { path: '/cutOffMaster', name: 'CutOffMaster', element: CutOffMaster },

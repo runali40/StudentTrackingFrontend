@@ -2,36 +2,32 @@ import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { Add, Delete, Edit, Height } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
-import { addParameter, deleteParameter, getAllParameterMasterData, getParameterMasterData } from "../../../Components/Api/ParameterMasterApi";
-import { Cursor } from "react-bootstrap-icons";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import {
   toast
 } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { AddStateApi, DeleteStateApi, getAllStateApi, GetStateApi } from "../../../Components/Api/StateMasterApi";
 
-const ParameterMaster = () => {
+const StateMaster = () => {
   const navigate = useNavigate();
-  const [allParameter, setAllParameter] = useState([]);
+  const [allState, setAllState] = useState([]);
   const [searchData, setSearchData] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedItemsPerPage, setSelectedItemsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
 
-  const [parameterName, setParameterName] = useState("");
-  const [parameterCode, setParameterCode] = useState("");
+  const [stateName, setStateName] = useState("");
+  const [stateCode, setStateCode] = useState("");
   const [active, setActive] = useState(true);
   const [toggleActive, setToggleActive] = useState(true);
-  const [parameterId, setParameterId] = useState("");
-  const [pId, setPId] = useState("")
+  const [sId, setSId] = useState("")
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
 
-  // const handleClose = () => setShowModal(false);
-  // const handleShow = () => setShowModal(true);
   const handleShow = () => {
     setShowModal(true);
   };
@@ -39,52 +35,22 @@ const ParameterMaster = () => {
   const handleClose = () => setShowModal(false);
 
   useEffect(() => {
-    getAllData();
+    getAllState();
   }, [currentPage, itemsPerPage, toggleActive, active]);
 
-  const getAllData = () => {
-    getAllParameterMasterData(active, toggleActive).then((data) => {
-      setAllParameter(data)
-    }).catch((error) => {
-      console.log(error);
-    })
-  };
+  const getAllState = async () => {
+    const data = await getAllStateApi(navigate);
+    console.log(data)
+    setAllState(data)
+  }
 
-  const addParameterMaster = async () => {
-    const UserId = localStorage.getItem('userId');
-    // const recruitId = localStorage.getItem("recruitId")
-    let data;
-
-    if (parameterCode === "") {
-      toast.warning(" Please enter parameter code!");
-    } else if (parameterName === "") {
-      toast.warning(" Please enter parameter name!");
-    } else {
-      data = {
-        UserId: UserId,
-        p_parametername: parameterName,
-        p_code: parameterCode,
-        p_isactive: active ? "1" : "2",
-      };
-
-      if (pId !== null && pId !== "") {
-        data.p_id = pId;
-      }
-
-      try {
-        await addParameter(data);
-        await getAllData();
-        setParameterCode("");
-        setParameterName("");
-        handleClose();
-        resetForm();
-      } catch (error) {
-        console.error("Error adding parameter:", error);
-        // Handle error appropriately
-      }
-    }
-  };
-
+  const AddStateMaster = async () => {
+    const data = await AddStateApi(stateCode, stateName, sId, navigate);
+    console.log(data)
+    handleClose();
+    getAllState();
+    resetForm()
+  }
 
   const handleChange = (e) => {
     setSelectedItemsPerPage(parseInt(e.target.value));
@@ -92,33 +58,29 @@ const ParameterMaster = () => {
     setCurrentPage(1);
   };
 
-
-  const getParameter = (pId) => {
+  const getState = async (stateId) => {
+    const data = await GetStateApi(stateId, navigate);
+    console.log(data)
     handleShow();
-    getParameterMasterData(pId).then((data) => {
-      if (data) {
-        setParameterCode(
-          data.p_code)
-        setParameterName(data.
-          p_parametername)
-        setPId(data.p_id)
-      }
-    })
-  };
-
-  const handleParameterNameClick = (pId, parameterName) => {
-    navigate('/parameterValueMaster', { state: { pId, parameterName } });
+    setStateName(data.s_Statename)
+    setStateCode(data.s_code)
+    setSId(data.s_id)
   }
-  const DeleteParameterMaster = (pId) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this parameter?");
-    if (!isConfirmed) return;
-    deleteParameter(pId).then(() => getAllData().then(setAllParameter));
+
+  const handlestateNameClick = (sId, stateName) => {
+    navigate('/cityMaster', { state: { sId, stateName } });
+  }
+
+  const DeleteState = async (stateId) => {
+    const data = await DeleteStateApi(stateId, navigate);
+    console.log(data)
+    getAllState();
   }
 
   const resetForm = () => {
-    setParameterCode("");
-    setParameterName("");
-    setPId("");
+    setStateCode("");
+    setStateName("");
+    setSId("");
   };
   const handleSearch = (e) => {
     const searchDataValue = e.target.value.toLowerCase();
@@ -126,22 +88,22 @@ const ParameterMaster = () => {
 
     if (searchDataValue.trim() === "") {
       // If search input is empty, fetch all data
-      getAllData();
+      getAllState();
     } else {
       // Filter data based on search input value
-      const filteredData = allParameter.filter(
-        (parameter) =>
-          parameter.p_code.toLowerCase().includes(searchDataValue) ||
-          parameter.p_parametername.toLowerCase().includes(searchDataValue)
+      const filteredData = allState.filter(
+        (state) =>
+          state.s_code.toLowerCase().includes(searchDataValue) ||
+          state.s_stateName.toLowerCase().includes(searchDataValue)
       );
-      setAllParameter(filteredData);
+      setAllState(filteredData);
       setCurrentPage(1);
     }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = allParameter.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = allState.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
@@ -155,7 +117,7 @@ const ParameterMaster = () => {
               <div className="card-header">
                 <div className="row align-items-center">
                   <div className="col">
-                    <h4 className="card-title fw-bold">Parameter Master</h4>
+                    <h4 className="card-title fw-bold">State Master</h4>
                   </div>
                   <div className="col-auto d-flex flex-wrap">
                     <div className="form-check form-switch mt-2 pt-1">
@@ -171,9 +133,7 @@ const ParameterMaster = () => {
                       <Button
                         // onClick={handleShow}
                         onClick={() => {
-                          setParameterCode("");
-                          setParameterName("");
-                          setParameterId("");
+                          resetForm();
                           handleShow();
                         }}
                         style={{ backgroundColor: "#1B5A90" }}
@@ -220,10 +180,10 @@ const ParameterMaster = () => {
                         Sr.No
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Parameter Code
+                        State Code
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Parameter Name
+                        State Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
                         Status
@@ -235,35 +195,35 @@ const ParameterMaster = () => {
                   </thead>
                   <tbody>
                     {
-                      allParameter.map((data, index) => {
+                      currentItems.map((data, index) => {
                         return (
-                          <tr key={data.p_id}>
+                          <tr key={data.s_id}>
                             <td> {(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td>{data.p_code}</td>
+                            <td>{data.s_code}</td>
                             <td>
                               <button
                                 className="btn btn-link p-0"
-                                onClick={() => handleParameterNameClick(data.p_id, data.p_parametername)}
+                                onClick={() => handlestateNameClick(data.s_id, data.s_Statename)}
                                 style={{ color: "#1B5A90"/* , textDecoration: "underline" */ }}
                               >
-                                {data.p_parametername}
+                                {data.s_Statename}
                               </button>
                             </td>
-                            <td>{data.p_isactive}</td>
+                            <td>{data.s_isactive}</td>
                             <td className="text-center">
                               <div className="d-flex justify-content-center align-items-center gap-">
                                 <Edit
                                   className="text-success mr-2"
                                   type="button"
-                                  // onClick={() => getParameter(data.p_id)}
-                                  style={{
-                                    // marginLeft: "0.5rem",
-                                    ...(data.p_isactive === "Inactive" && {
-                                      opacity: 0.5,  // Makes the icon appear faded
-                                      cursor: "not-allowed", // Changes cursor to indicate disabled state
-                                    }),
-                                  }}
-                                  onClick={data.p_isactive === "Inactive" ? null : () => getParameter(data.p_id)}
+                                  onClick={() => getState(data.s_id)}
+                                // style={{
+
+                                //   ...(data.p_isactive === "Inactive" && {
+                                //     opacity: 0.5,  // Makes the icon appear faded
+                                //     cursor: "not-allowed", // Changes cursor to indicate disabled state
+                                //   }),
+                                // }}
+                                // onClick={data.p_isactive === "Inactive" ? null : () => getParameter(data.p_id)}
                                 />
 
                                 {/* <Delete
@@ -277,13 +237,13 @@ const ParameterMaster = () => {
                                 <Delete
                                   className="text-danger"
                                   type="button"
-                                  // onClick={() => DeleteParameterMaster(data.p_id)}
-                                  style={{
-                                    marginLeft: "0.5rem",
-                                    opacity: 0.5,  // Makes the icon appear faded
-                                    cursor: 'not-allowed'  // Changes cursor to indicate disabled state
-                                  }}
-                                  disabled={true}  // Disables the icon
+                                  onClick={() => DeleteState(data.s_id)}
+                                // style={{
+                                //   marginLeft: "0.5rem",
+                                //   opacity: 0.5,  // Makes the icon appear faded
+                                //   cursor: 'not-allowed'  // Changes cursor to indicate disabled state
+                                // }}
+                                // disabled={true} 
                                 />
                               </div>
                             </td>
@@ -297,8 +257,8 @@ const ParameterMaster = () => {
                   <div className="col-lg-4 col-md-4 col-12 ">
                     <h6 className="text-lg-start text-center">
                       Showing {indexOfFirstItem + 1} to{" "}
-                      {Math.min(indexOfLastItem, allParameter.length)} of{" "}
-                      {allParameter.length} entries
+                      {Math.min(indexOfLastItem, allState.length)} of{" "}
+                      {allState.length} entries
                     </h6>
                   </div>
                   <div className="col-lg-4 col-md-4 col-12"></div>
@@ -306,7 +266,7 @@ const ParameterMaster = () => {
                     <Pagination
                       currentPage={currentPage}
                       setCurrentPage={setCurrentPage}
-                      allData={allParameter}
+                      allData={allState}
                       itemsPerPage={itemsPerPage}
                     />
                   </div>
@@ -320,46 +280,46 @@ const ParameterMaster = () => {
       <Modal show={showModal} onHide={handleClose} size="lg" backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="fw-bold">Add Parameter</h5>
+            <h5 className="fw-bold">Add State</h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Row>
               <Col xs={12} sm={12} md={6} lg={6} className="mt-2 mt-lg-0">
-                <Form.Group className="mb-3" controlId="parameterCode">
-                  <Form.Label className="fw-bold">Parameter Code:</Form.Label>{" "}
+                <Form.Group className="mb-3" controlId="stateCode">
+                  <Form.Label className="fw-bold">State Code:</Form.Label>{" "}
                   <span className="text-danger fw-bold">*</span>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Parameter Code"
-                    value={parameterCode}
-                    // onChange={(e) => setParameterCode(e.target.value)}
+                    placeholder="Enter State Code"
+                    value={stateCode}
+                    // onChange={(e) => setStateCode(e.target.value)}
                     maxLength={4} // Restrict input length to 10 characters
                     onChange={(e) => {
                       const value = e.target.value;
                       if (/^\d*$/.test(value)) {
-                        setParameterCode(value);
+                        setStateCode(value);
                       }
                     }}
                   />
                 </Form.Group>
               </Col>
               <Col xs={12} sm={12} md={6} lg={6} className="mt-2 mt-lg-0">
-                <Form.Group className="mb-3" controlId="parameterName">
-                  <Form.Label className="fw-bold">Parameter Name:</Form.Label>{" "}
+                <Form.Group className="mb-3" controlId="stateName">
+                  <Form.Label className="fw-bold">State Name:</Form.Label>{" "}
                   <span className="text-danger fw-bold">*</span>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Parameter Name"
-                    value={parameterName}
-                    // onChange={(e) => setParameterName(e.target.value)}
+                    placeholder="Enter State Name"
+                    value={stateName}
+                    // onChange={(e) => setStateName(e.target.value)}
                     maxLength={50} // Restrict input to 50 characters
                     onChange={(e) => {
                       const value = e.target.value;
                       // Allow only alphabetic characters (letters and spaces)
                       if (/^[a-zA-Z\s]*$/.test(value)) {
-                        setParameterName(value);
+                        setStateName(value);
                       }
                     }
                     }
@@ -381,7 +341,7 @@ const ParameterMaster = () => {
           <Button
             style={{ backgroundColor: "#1B5A90" }}
             onClick={() => {
-              addParameterMaster();
+              AddStateMaster();
             }}
           >
             Save
@@ -391,9 +351,7 @@ const ParameterMaster = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-
     </>
   );
 };
-export default ParameterMaster;
+export default StateMaster;

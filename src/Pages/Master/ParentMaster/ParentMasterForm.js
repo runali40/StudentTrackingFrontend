@@ -9,22 +9,17 @@ import Select from "react-select";
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { AddParentApi } from "../../../Components/Api/ParentMasterApi";
+import { AddParentApi, getParentApi } from "../../../Components/Api/ParentMasterApi";
+import { getAllStudentApi } from "../../../Components/Api/StudentApi";
+import { getAllStateApi } from "../../../Components/Api/StateMasterApi";
+import { getAllCityApi } from "../../../Components/Api/CityMasterApi";
 
 const ParentMasterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { dId } = location.state || {};
+  const { parentId } = location.state || {};
   const [dutyName, setDutyName] = useState("");
   const [allDutyName, setAllDutyName] = useState("")
-  const [dutyDescription, setDutyDescription] = useState("");
-  const [module, setModule] = useState("");
-  const [noOfUsers, setNoOfUsers] = useState("");
-  const [active, setActive] = useState(true);
-  const [allScreens, setAllScreens] = useState([]);
-  const [menuDataArray, setMenuDataArray] = useState([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [isAllChecked, setIsAllChecked] = useState(false);
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [emailId, setEmailId] = useState("")
@@ -34,188 +29,110 @@ const ParentMasterForm = () => {
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [pincode, setPincode] = useState("")
+  const [pId, setPId] = useState("")
+  const [allStudent, setAllStudent] = useState([])
+  const [allState, setAllState] = useState([])
+  const [allCity, setAllCity] = useState([])
 
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
 
-  const AddParentMaster = async () => {
-        const data = await AddParentApi(firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, navigate);
-        console.log(data)  
-    }
+  useEffect(() => {
+    getParent();
+  }, [parentId]);
 
   useEffect(() => {
-    if (isDataLoaded && dId) {
-      const recruitId = localStorage.getItem("recruitId");
-      const UserId = localStorage.getItem("userId");
-      apiClient({
-        method: "get",
-        url: `DutyMaster/GetDutyById`,
-        params: {
-          UserId: UserId,
-          d_id: dId,
-          d_recruitid: recruitId,
-          d_isactive: active === true ? "1" : "2"
-        },
-      })
-        .then((response) => {
-          console.log(response, "get by id duty master");
-          if (response && response.data && response.data.data && response.data.data.length > 0) {
-            const temp = response.data.data;
+    const fetchData = async () => {
+      try {
+        await getAllStudent();
+        await getAllState();
+        // await getAllCity();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-            // Map the data to options format
-            const options = temp.map((item) => ({
-              value: item.d_id,
-              label: item.d_dutyname,
-            }));
+  const getAllStudent = async () => {
+    const data = await getAllStudentApi(navigate);
+    console.log(data)
+    const options = data.map((data) => ({
+      value: data.Id,
+      label: `${data.StudentName}`,
+    }));
+    setAllStudent(options);
+  }
 
-            // Set the state with the mapped options
-            setDutyName(options[0]);
-            setDutyDescription(response.data.data[0].d_description);
-            setModule(response.data.data[0].d_module);
-            setNoOfUsers(response.data.data[0].d_no_of_user);
-            setMenuDataArray(response.data.data);
-            const token1 = response.data.outcome.tokens;
-            Cookies.set("UserCredential", token1, { expires: 7 });
-          } else {
-            console.error("No data found in response");
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data && error.response.data.outcome) {
-            const token1 = error.response.data.outcome.tokens;
-            Cookies.set("UserCredential", token1, { expires: 7 });
-          }
-          console.log(error);
-          const errors = ErrorHandler(error);
-          toast.error(errors);
-        });
-    }
-  }, [isDataLoaded, dId, active]);
+  const getAllState = async () => {
+    const data = await getAllStateApi(navigate);
+    console.log(data)
+    const options = data.map((data) => ({
+      value: data.s_id,
+      label: `${data.s_Statename}`,
+    }));
+    setAllState(options);
+  }
 
-  const getAllData = () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-    return apiClient({
-      method: "get",
-      url: `GetWebMenu/GetMenu`,
-      params: {
-        UserId: UserId,
-        RecruitId: recruitId,
-      },
-    })
-      .then((response) => {
-        console.log("response screens", response.data.data);
-        setAllScreens(response.data.data);
-        const token1 = response.data.outcome.tokens;
-        Cookies.set("UserCredential", token1, { expires: 7 });
-      })
-      .catch((error) => {
-        if (error.response && error.response.data && error.response.data.outcome) {
-          const token1 = error.response.data.outcome.tokens;
-          Cookies.set("UserCredential", token1, { expires: 7 });
-        }
-        console.log(error);
-        const errors = ErrorHandler(error);
-        toast.error(errors);
-      });
-  };
+  const handleState = (selected) => {
+    const selectedValue = selected;
+    setState(selectedValue);
+    console.log(selectedValue, "selected state value");
+    getAllCity(selectedValue);
+  }
 
-  const getDutyName = () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-    return apiClient({
-      method: "get",
-      url: `DutyMaster/GetDutyName`,
-      params: {
-        UserId: UserId,
-        RecruitId: recruitId,
-      },
-    })
-      .then((response) => {
-        console.log("response all duty name", response.data.data);
-        const temp = response.data.data;
-        const options = temp.map((data) => ({
-          value: data.id,
-          label: data.dutyname,
-        }));
-        setAllDutyName(options);
-        const token1 = response.data.outcome.tokens;
-        Cookies.set("UserCredential", token1, { expires: 7 });
-      })
-      .catch((error) => {
-        if (error.response && error.response.data && error.response.data.outcome) {
-          const token1 = error.response.data.outcome.tokens;
-          Cookies.set("UserCredential", token1, { expires: 7 });
-        }
-        console.log(error);
-        const errors = ErrorHandler(error);
-        toast.error(errors);
-      });
-  };
+  const getAllCity = async (selectedValue) => {
+    const stateId = selectedValue.value;
+    console.log(stateId,"88")
+    const data = await getAllCityApi(stateId, navigate);
+    console.log(data)
+    const options = data.map((data) => ({
+      value: data.c_id,
+      label: `${data.c_cityvalue}`,
+    }));
+    setAllCity(options);
+  }
+
+  const handleStudent = (selected) => {
+    const selectedValue = selected;
+    setStudentName(selectedValue);
+    console.log(selectedValue, "selected value");
+  }
+
+
+
+  const handleCity = (selected) => {
+    const selectedValue = selected;
+    setCity(selectedValue);
+    console.log(selectedValue, "selected state value");
+  }
+
+  const AddParentMaster = async () => {
+    const data = await AddParentApi(firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, navigate);
+    console.log(data)
+    navigate("/parentMaster")
+  }
+
+  const getParent = async () => {
+    const data = await getParentApi(parentId, navigate);
+    console.log(data)
+    setFirstName(data.FisrtName)
+    setLastName(data.LastName)
+    setEmailId(data.EmailId)
+    setMobileNo(data.MobileNo)
+    setStudentName(data.ChildName)
+    setAddress(data.Address)
+    setCity(data.City)
+    setState(data.State)
+    setPincode(data.PinCode)
+    setPId(data.Id)
+  }
 
   const handleDutyName = (selected) => {
     setDutyName(selected);
   };
-
-
-
-  useEffect(() => {
-    // console.log(menuDataArray);
-  }, [menuDataArray]);
-
-  const addRoleMaster = () => {
-    const recruitId = localStorage.getItem("recruitId");
-    const UserId = localStorage.getItem("userId");
-    // console.log(menuDataArray, "menuDataArray");
-    let data;
-    if (dutyName === "" || noOfUsers === "" || menuDataArray.length === 0) {
-      toast.warning("Please fill data in all fields!");
-    } else {
-      data = {
-        userId: UserId,
-        d_recruitid: recruitId,
-        d_dutyName: dutyName.label,
-        d_description: dutyDescription,
-        d_module: module,
-        d_isactive: active === true ? "1" : "2",
-        d_no_of_user: noOfUsers,
-        Privilage: menuDataArray,
-      };
-      console.log(data.Privilage, "Privilage");
-      if (dId !== null && dId !== "") {
-        data.d_id = dId;
-      }
-      apiClient({
-        method: "post",
-        url: `DutyMaster`,
-        data: data, // Make sure to stringify the data object
-      })
-        .then((response) => {
-          console.log(response, "add Duty Master");
-          if (dId !== null && dId !== undefined) {
-            toast.success("Duty updated successfully!");
-          } else {
-            toast.success("Duty added successfully!");
-          }
-          console.log(menuDataArray, "menu data array");
-          const token1 = response.data.outcome.tokens;
-          Cookies.set("UserCredential", token1, { expires: 7 });
-          navigate("/dutyMaster");
-        })
-        .catch((error) => {
-          if (error.response && error.response.data && error.response.data.outcome) {
-            const token1 = error.response.data.outcome.tokens;
-            Cookies.set("UserCredential", token1, { expires: 7 });
-          }
-          console.log(error);
-          const errors = ErrorHandler(error);
-          toast.error(errors);
-        });
-    }
-  };
-
 
   return (
     <>
@@ -360,8 +277,8 @@ const ParentMasterForm = () => {
                       <Select
                         className="mt-3"
                         value={studentName}
-                        onChange={handleDutyName}
-                        options={allDutyName}
+                        onChange={handleStudent}
+                        options={allStudent}
                         placeholder="Select Student Name"
 
                       />
@@ -397,8 +314,8 @@ const ParentMasterForm = () => {
                       <Select
                         className="mt-3"
                         value={city}
-                        onChange={handleDutyName}
-                        options={allDutyName}
+                        onChange={handleCity}
+                        options={allCity}
                         placeholder="Select City"
 
                       />
@@ -414,8 +331,8 @@ const ParentMasterForm = () => {
                       <Select
                         className="mt-3"
                         value={state}
-                        onChange={handleDutyName}
-                        options={allDutyName}
+                        onChange={handleState}
+                        options={allState}
                         placeholder="Select State"
 
                       />
@@ -445,7 +362,7 @@ const ParentMasterForm = () => {
                 <br />
               </div>
               <div className="card-footer">
-                <button className="btn btn-primarty" onClick={AddParentMaster}>Save</button>
+                <button className="btn btn-primary" onClick={AddParentMaster}>Save</button>
               </div>
             </div>
           </div>

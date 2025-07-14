@@ -6,28 +6,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import ErrorHandler from "../ErrorHandler";
 
 
-export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, navigate) => {
+export const AddCityApi = (cityCode, cityName, stateId, stateName, CId, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,
-        fisrtName: firstName,
-        lastName: lastName,
-        emailId: emailId,
-        mobileNo: mobileNo,
-        address: address,
-        aadharNo: "",
-        city: city.value,
-        state: state.value,
-        country: "",
-        pinCode: pincode,
-        childName: studentName.value,
-        roleName : ""
+         c_code: cityCode,
+        c_cityvalue: cityName,
+        c_stateid: stateId,
+        c_statename: stateName,
+        c_isactive: "1",
 
     };
-    if (pId !== null && pId !== "") {
-        data.id = pId;
+    if (CId !== null && CId !== "") {
+        data.c_id = CId;
     }
-    const url = 'ParentMaster/InsertParent';
+    const url = 'CityValueMaster';
     return apiClient({
         method: 'post',
         url: UrlData + url,
@@ -35,11 +28,11 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
     })
         .then((response) => {
             console.log('API response:', response);
-            // toast.success("Parent added successfully!");
-            if (data.id) {
-                toast.success("Parent updated successfully!");
+            // toast.success("State added successfully!");
+            if (data.c_id) {
+                toast.success("City updated successfully!");
             } else {
-                toast.success("Parent added successfully!");
+                toast.success("City added successfully!");
             }
             const token1 = response.data.outcome.tokens;
             Cookies.set("UserCredential", token1, { expires: 7 });
@@ -62,12 +55,14 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
         });
 };
 
-export const getAllParentApi = (navigate) => {
+export const getAllCityApi = (sId, navigate) => {
     const userId = localStorage.getItem('userId');
     const params = {
         userId: userId,
+        c_stateid: sId,
+        c_isactive: "1",
     };
-    const url = 'ParentMaster/GetAllParent';
+    const url = 'CityValueMaster/GetAll';
     return apiClient({
         method: 'get',
         url: UrlData + url,
@@ -97,13 +92,13 @@ export const getAllParentApi = (navigate) => {
         });
 };
 
-export const getParentApi = (parentId, navigate) => {
+export const GetCityApi = (cityId, navigate) => {
     const userId = localStorage.getItem('userId');
     const params = {
         userId: userId,
-        Id: parentId,
+        c_id: cityId,
     };
-    const url = 'ParentMaster/GetParent';
+    const url = 'CityValueMaster/Get';
     return apiClient({
         method: 'get',
         url: UrlData + url,
@@ -133,13 +128,13 @@ export const getParentApi = (parentId, navigate) => {
         });
 };
 
-export const deleteParentIdApi = (parentId, navigate) => {
+export const DeleteCityApi = (cityId, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,
-        id: parentId,
+        c_id: cityId,
     };
-    const url = 'ParentMaster/Delete';
+    const url = 'CityValueMaster/Delete';
     return apiClient({
         method: 'post',
         url: UrlData + url,
@@ -147,7 +142,7 @@ export const deleteParentIdApi = (parentId, navigate) => {
     })
         .then((response) => {
             console.log('delete API response:', response.data);
-            toast.success("Parent Deleted Successfully!")
+            toast.success("City Deleted Successfully!")
             const token1 = response.data.outcome.tokens;
             Cookies.set("UserCredential", token1, { expires: 7 });
             return response.data.data;

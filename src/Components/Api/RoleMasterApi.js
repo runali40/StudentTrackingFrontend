@@ -14,7 +14,6 @@ export const getAllRoleMasterData = (active) => {
     url: (`RoleMaster/GetAll`).toString(),
     params: {
       UserId: UserId,
-      r_recruitid: recruitId,
       r_isactive: active ? "1" : "2",  
     },
   })

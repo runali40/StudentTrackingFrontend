@@ -24,7 +24,7 @@ const RoleMaster = () => {
   const [recruitmentValue, setRecruitmentValue] = useState("")
 
   const headerCellStyle = {
-    backgroundColor: "rgb(27, 90, 144)",
+    backgroundColor: "#036672",
     color: "#fff",
   };
 
