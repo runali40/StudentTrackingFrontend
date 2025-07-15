@@ -23,8 +23,6 @@ const RoleMasterForm = () => {
   const [active, setActive] = useState(true);
   const [allScreens, setAllScreens] = useState([]);
   const [menuDataArray, setMenuDataArray] = useState([]);
-  const [allRecruitment, setAllRecruitment] = useState([]);
-  const [recruitmentValue, setRecruitmentValue] = useState("");
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isAllChecked, setIsAllChecked] = useState(false);
   // const storedToken = localStorage.getItem("UserCredential");
@@ -377,7 +375,8 @@ const RoleMasterForm = () => {
                       <button
                         className="btn btn-md text-light"
                         type="button"
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                       >
                         <ArrowBack />
                       </button>
@@ -607,7 +606,8 @@ const RoleMasterForm = () => {
                     <button
                       className="btn btn-md text-light"
                       type="button"
-                      style={{ backgroundColor: "#1B5A90" }}
+                      // style={{ backgroundColor: "#1B5A90" }}
+                      style={headerCellStyle}
                       onClick={() => {
                         addRoleMaster();
                         // editDesignation();

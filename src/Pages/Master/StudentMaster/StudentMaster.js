@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { Add, Delete, Edit, Height } from "@material-ui/icons";
+import { Add, Delete, Edit } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
-import { addParameter, deleteParameter, getallStudentMasterData, getParameterMasterData } from "../../../Components/Api/ParameterMasterApi";
 import { Cursor } from "react-bootstrap-icons";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import {
@@ -147,7 +146,8 @@ const StudentMaster = () => {
                                                     handleShow();
 
                                                 }}
-                                                style={{ backgroundColor: "#1B5A90" }}
+                                                style={headerCellStyle}
+                                                // style={{ backgroundColor: "#1B5A90" }}
                                             >
                                                 <Add />
                                             </Button>
@@ -407,7 +407,8 @@ const StudentMaster = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                         onClick={() => {
                             AddStudentMaster();
                         }}

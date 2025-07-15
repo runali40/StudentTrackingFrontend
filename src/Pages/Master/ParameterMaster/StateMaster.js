@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { Add, Delete, Edit, Height } from "@material-ui/icons";
+import { Add, Delete, Edit } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import {
@@ -136,7 +136,8 @@ const StateMaster = () => {
                           resetForm();
                           handleShow();
                         }}
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                       >
                         <Add />
                       </Button>
@@ -339,7 +340,8 @@ const StateMaster = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            style={{ backgroundColor: "#1B5A90" }}
+            // style={{ backgroundColor: "#1B5A90" }}
+            style={headerCellStyle}
             onClick={() => {
               AddStateMaster();
             }}

@@ -49,20 +49,20 @@ const CityMaster = () => {
     resetForm()
   }
 
-    const getCity= async (cityId) => {
-      const data = await GetCityApi(cityId, navigate);
-      console.log(data)
-      handleShow();
-      setCityName(data.c_cityvalue)
-      setCityCode(data.c_code)
-      setCId(data.c_id)
-    }
-  
-    const DeleteCity = async (cityId) => {
-      const data = await DeleteCityApi(cityId, navigate);
-      console.log(data)
-      getAllCity();
-    }
+  const getCity = async (cityId) => {
+    const data = await GetCityApi(cityId, navigate);
+    console.log(data)
+    handleShow();
+    setCityName(data.c_cityvalue)
+    setCityCode(data.c_code)
+    setCId(data.c_id)
+  }
+
+  const DeleteCity = async (cityId) => {
+    const data = await DeleteCityApi(cityId, navigate);
+    console.log(data)
+    getAllCity();
+  }
 
   const handleChange = (e) => {
     setSelectedItemsPerPage(parseInt(e.target.value));
@@ -140,7 +140,8 @@ const CityMaster = () => {
                           resetForm();
                           handleShow();
                         }}
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                       >
                         <Add />
                       </Button>
@@ -150,7 +151,8 @@ const CityMaster = () => {
                         onClick={() => {
                           navigate(-1);
                         }}
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                       >
                         <ArrowBack />
                       </Button>
@@ -231,14 +233,14 @@ const CityMaster = () => {
                                       getCity(data.c_id);
 
                                     }}
-                                    // style={{
-                                     
-                                    //   ...(data.pv_isactive === "Inactive" && {
-                                    //     opacity: 0.5,  // Makes the icon appear faded
-                                    //     cursor: "not-allowed", // Changes cursor to indicate disabled state
-                                    //   }),
-                                    // }}
-                                    // onClick={data.pv_isactive === "Inactive" ? null : () => GetParameterValue(data.pv_id)}
+                                  // style={{
+
+                                  //   ...(data.pv_isactive === "Inactive" && {
+                                  //     opacity: 0.5,  // Makes the icon appear faded
+                                  //     cursor: "not-allowed", // Changes cursor to indicate disabled state
+                                  //   }),
+                                  // }}
+                                  // onClick={data.pv_isactive === "Inactive" ? null : () => GetParameterValue(data.pv_id)}
                                   />
                                   {/* <Delete
                                     className="text-danger"
@@ -250,12 +252,12 @@ const CityMaster = () => {
                                     className="text-danger"
                                     type="button"
                                     onClick={() => DeleteCity(data.c_id)}
-                                    // style={{
-                                    //   marginLeft: "0.5rem",
-                                    //   opacity: 0.5,  // Makes the icon appear faded
-                                    //   cursor: 'not-allowed'  // Changes cursor to indicate disabled state
-                                    // }}
-                                    // disabled={true}  // Disables the icon
+                                  // style={{
+                                  //   marginLeft: "0.5rem",
+                                  //   opacity: 0.5,  // Makes the icon appear faded
+                                  //   cursor: 'not-allowed'  // Changes cursor to indicate disabled state
+                                  // }}
+                                  // disabled={true}  // Disables the icon
                                   />
                                 </div>
 
@@ -368,7 +370,8 @@ const CityMaster = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            style={{ backgroundColor: "#1B5A90" }}
+            // style={{ backgroundColor: "#1B5A90" }}
+            style={headerCellStyle}
             onClick={() => {
               AddCityMaster();
             }}

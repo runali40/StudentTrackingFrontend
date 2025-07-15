@@ -6,29 +6,25 @@ import Select from "react-select";
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { AddParentApi, getParentApi } from "../../../Components/Api/ParentMasterApi";
-import { getAllStudentApi } from "../../../Components/Api/StudentApi";
 import { getAllStateApi } from "../../../Components/Api/StateMasterApi";
 import { getAllCityApi } from "../../../Components/Api/CityMasterApi";
 import { getAllRoleMasterData } from "../../../Components/Api/RoleMasterApi";
+import { AddPrincipalApi, getPrincipalApi } from "../../../Components/Api/PrincipalMasterApi";
 
-const ParentMasterForm = () => {
+const PrincipalMasterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { parentId } = location.state || {};
-  const [dutyName, setDutyName] = useState("");
-  const [allDutyName, setAllDutyName] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [emailId, setEmailId] = useState("")
   const [mobileNo, setMobileNo] = useState("")
-  const [studentName, setStudentName] = useState("")
-  const [address, setAddress] = useState("")
+  const [schoolName, setSchoolName] = useState("")
+  const [schoolAddress, setSchoolAddress] = useState("")
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [pincode, setPincode] = useState("")
   const [pId, setPId] = useState("")
-  const [allStudent, setAllStudent] = useState([])
   const [allState, setAllState] = useState([])
   const [allCity, setAllCity] = useState([])
   const [allRole, setAllRole] = useState([])
@@ -41,16 +37,14 @@ const ParentMasterForm = () => {
   };
 
   useEffect(() => {
-    getParent();
+    getPrincipal();
   }, [parentId]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await getAllStudent();
         await getAllState();
         await getAllRoleData();
-        // await getAllCity();
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -68,26 +62,10 @@ const ParentMasterForm = () => {
     setAllRole(options);
   };
 
-    const handleRoleName = (selected) => {
+  const handleRoleName = (selected) => {
     const selectedValue = selected;
     setRoleName(selectedValue);
   };
-
-  const getAllStudent = async () => {
-    const data = await getAllStudentApi(navigate);
-    console.log(data)
-    const options = data.map((data) => ({
-      value: data.Id,
-      label: `${data.StudentName}`,
-    }));
-    setAllStudent(options);
-  }
-
-  const handleStudent = (selected) => {
-    const selectedValue = selected;
-    setStudentName(selectedValue);
-    console.log(selectedValue, "selected value");
-  }
 
   const getAllState = async () => {
     const data = await getAllStateApi(navigate);
@@ -124,21 +102,21 @@ const ParentMasterForm = () => {
     console.log(selectedValue, "selected state value");
   }
 
-  const AddParentMaster = async () => {
-    const data = await AddParentApi(firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, navigate);
+  const AddPrincipalMaster = async () => {
+    const data = await AddPrincipalApi(firstName, lastName, emailId, mobileNo, schoolName, schoolAddress, city, state, pincode, pId, roleName, navigate);
     console.log(data)
-    navigate("/parentMaster")
+    navigate("/principalMaster")
   }
 
-  const getParent = async () => {
-    const data = await getParentApi(parentId, navigate);
+  const getPrincipal = async () => {
+    const data = await getPrincipalApi(parentId, navigate);
     console.log(data)
     setFirstName(data.FisrtName)
     setLastName(data.LastName)
     setEmailId(data.EmailId)
     setMobileNo(data.MobileNo)
-    setStudentName(data.ChildName)
-    setAddress(data.Address)
+    setSchoolName(data.ChildName)
+    setSchoolAddress(data.schoolAddress)
     setCity(data.City)
     setState(data.State)
     setPincode(data.PinCode)
@@ -159,7 +137,7 @@ const ParentMasterForm = () => {
               >
                 <div className="row align-items-center">
                   <div className="col">
-                    <h4 className="card-title fw-bold">Add Parent</h4>
+                    <h4 className="card-title fw-bold">Add Principal</h4>
                   </div>
                   <div className="col-md-2  justify-content-end d-none">
                     {/* <input
@@ -181,7 +159,7 @@ const ParentMasterForm = () => {
                       className="btn btn-add"
                       title="Back"
                       onClick={() => {
-                        navigate("/parentMaster");
+                        navigate("/principalMaster");
                       }}
                     >
                       <button
@@ -283,39 +261,58 @@ const ParentMasterForm = () => {
                   <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 mt-0 mt-lg-0">
                     <div className="form-group form-group-sm">
                       <label className="control-label fw-bold">
-                        Student Name:
+                        School Name:
                       </label>{" "}
                       <span className="text-danger fw-bold">*</span>
-                      <Select
-                        className="mt-3"
-                        value={studentName}
-                        onChange={handleStudent}
-                        options={allStudent}
-                        placeholder="Select Student Name"
+                      <input
+                        type="text"
+                        id="schoolName"
+                        name="schoolName"
+                        className="form-control mt-3"
+                        autoComplete="off"
+                        placeholder="Enter School Name"
+                        value={schoolName}
+                        onChange={(e) => setSchoolName(e.target.value)}
                       />
                     </div>
                   </div>
                   <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <div className="form-group form-group-sm">
                       <label className="control-label fw-bold">
-                        Address:
+                        School Address:
                       </label>
                       {" "}
                       <span className="text-danger fw-bold">*</span>
                       <input
                         type="text"
-                        id="address"
-                        name="address"
+                        id="schoolAddress"
+                        name="schoolAddress"
                         className="form-control mt-3"
                         autoComplete="off"
-                        placeholder="Enter Address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Enter School Address"
+                        value={schoolAddress}
+                        onChange={(e) => setSchoolAddress(e.target.value)}
                       />
                     </div>
                   </div>
                 </div>
                 <div className="row mt-4">
+                  <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 mt-0 mt-lg-0">
+                    <div className="form-group form-group-sm">
+                      <label className="control-label fw-bold">
+                        City:
+                      </label>{" "}
+                      <span className="text-danger fw-bold">*</span>
+                      <Select
+                        className="mt-3"
+                        value={city}
+                        onChange={handleCity}
+                        options={allCity}
+                        placeholder="Select City"
+
+                      />
+                    </div>
+                  </div>
                   <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <div className="form-group form-group-sm">
                       <label className="control-label fw-bold">
@@ -329,22 +326,6 @@ const ParentMasterForm = () => {
                         onChange={handleState}
                         options={allState}
                         placeholder="Select State"
-
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 mt-0 mt-lg-0">
-                    <div className="form-group form-group-sm">
-                      <label className="control-label fw-bold">
-                        City:
-                      </label>{" "}
-                      <span className="text-danger fw-bold">*</span>
-                      <Select
-                        className="mt-3"
-                        value={city}
-                        onChange={handleCity}
-                        options={allCity}
-                        placeholder="Select City"
 
                       />
                     </div>
@@ -388,7 +369,7 @@ const ParentMasterForm = () => {
                 <br />
               </div>
               <div className="card-footer">
-                <button className="btn" style={headerCellStyle} onClick={AddParentMaster}>Save</button>
+                <button className="btn" style={headerCellStyle} onClick={AddPrincipalMaster}>Save</button>
               </div>
             </div>
           </div>
@@ -399,4 +380,4 @@ const ParentMasterForm = () => {
   );
 };
 
-export default ParentMasterForm;
+export default PrincipalMasterForm;

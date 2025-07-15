@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { Add, Delete, Edit, } from "@material-ui/icons";
-import { json, useNavigate } from "react-router-dom";
-import { getAllRoleMasterData, deleteRoleMaster } from "../../../Components/Api/RoleMasterApi";
+import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../Components/Utils/Pagination";
-import { apiClient } from "../../../apiClient";
-import ErrorHandler from "../../../Components/ErrorHandler";
-import Select from "react-select";
-import Storage from "../../../Storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { deletePrincipalApi, getAllPrincipalApi } from "../../../Components/Api/PrincipalMasterApi";
 
-
-const RoleMaster = () => {
+const PrincipalMaster = () => {
   const navigate = useNavigate();
-  const [allRoleMaster, setAllRoleMaster] = useState([]);
+  const [allParent, setAllParent] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Initial value
   const [selectedItemsPerPage, setSelectedItemsPerPage] = useState(10);
   const [searchData, setSearchData] = useState("");
   const [active, setActive] = useState(true);
-  const [allRecruitment, setAllRecruitment] = useState([])
-  const [recruitmentValue, setRecruitmentValue] = useState("")
 
   const headerCellStyle = {
     backgroundColor: "#036672",
@@ -29,20 +22,15 @@ const RoleMaster = () => {
   };
 
   useEffect(() => {
-    getAllData();
-    // GetAllRecruitment();
-  }, [currentPage, itemsPerPage, active]); // Fetch data when currentPage or itemsPerPage changes
+    getAllPrincipal();
+  }, [currentPage, itemsPerPage, active]);
 
-  const getAllData = () => {
-    getAllRoleMasterData(active) // Call API function
-      .then((data) => {
-        setAllRoleMaster(data);
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle errors as needed, e.g., display an error message
-      });
-  };
+
+  const getAllPrincipal = async () => {
+    const data = await getAllPrincipalApi(navigate);
+    console.log(data)
+    setAllParent(data)
+  }
 
   const handleChange = (e) => {
     setSelectedItemsPerPage(parseInt(e.target.value));
@@ -50,46 +38,37 @@ const RoleMaster = () => {
     setCurrentPage(1);
   };
 
-  const GetRoleMaster = (rId) => {
-    navigate('/roleMasterForm', { state: { rId } });
+  const getParentData = (principalId) => {
+    navigate('/principalMasterForm', { state: { principalId } });
   };
 
-  const handleDelete = (rId) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this role?");
-    if (!isConfirmed) return;
-    deleteRoleMaster(rId)
-      .then((response) => {
-        console.log("Role deleted successfully!", response);
-        getAllData(); // Refresh data after deletion
-        toast.success("Role deleted successfully!")
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle delete error
-      });
-  };
+  const DeleteParentData = async (principalId) => {
+    const data = await deletePrincipalApi(principalId, navigate);
+    console.log(data)
+    getAllPrincipal();
+  }
 
   const handleSearch = (e) => {
     const searchDataValue = e.target.value.toLowerCase();
     setSearchData(searchDataValue);
 
     if (searchDataValue.trim() === "") {
-      getAllData();
+      getAllPrincipal();
     } else {
-      const filteredData = allRoleMaster.filter(
-        (role) =>
-          role.r_rolename.toLowerCase().includes(searchDataValue) ||
-          role.r_description.toLowerCase().includes(searchDataValue)
+      const filteredData = allParent.filter(
+        (parent) =>
+          parent.FisrtName.toLowerCase().includes(searchDataValue) ||
+          parent.LastName.toLowerCase().includes(searchDataValue) ||
+          parent.ChildName.toLowerCase().includes(searchDataValue)
       );
-      setAllRoleMaster(filteredData);
+      setAllParent(filteredData);
       setCurrentPage(1);
     }
   };
 
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = allRoleMaster.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = allParent.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
@@ -103,7 +82,7 @@ const RoleMaster = () => {
               <div className="card-header">
                 <div className="row align-items-center">
                   <div className="col">
-                    <h4 className="card-title fw-bold">Role Master</h4>
+                    <h4 className="card-title fw-bold">Principal Master</h4>
                   </div>
                   <div className="col-auto d-flex flex-wrap">
                     <div className="form-check form-switch mt-2 pt-1">
@@ -115,27 +94,13 @@ const RoleMaster = () => {
                         onChange={() => setActive(!active)}
                       />
                     </div>
-                    {/* <div className="me-2 my-auto">
-                      <Select
-                        value={recruitmentValue}
-                        onChange={handleRecruitmentChange}
-                        options={allRecruitment}
-                        placeholder="Select Recruitment"
-                        styles={{
-                          control: (provided) => ({
-                            ...provided,
-                            width: "100%", // Adjust width as needed
-                          }),
-                        }}
-                      />
-                    </div> */}
                     <div className="btn btn-add" title="Add New">
                       <button
                         className="btn btn-md text-light"
                         type="button"
                         // style={{ backgroundColor: "#1B5A90" }}
                         style={headerCellStyle}
-                        onClick={() => navigate("/roleMasterForm")}
+                        onClick={() => navigate("/principalMasterForm")}
                       >
                         <Add />
                       </button>
@@ -146,7 +111,7 @@ const RoleMaster = () => {
               </div>
               <div className="card-body pt-3">
                 <div className="row">
-                  <div className="col-lg-3 col-md-3 d-flex justify-content-center justify-content-lg-start">
+                  <div className="col-lg-3 col-md-3 d-flex justify-content-center justify-content-lg-start justify-content-md-start">
                     <h6 className="mt-2">Show</h6>&nbsp;&nbsp;
                     <select
                       style={{ height: "35px" }}
@@ -180,67 +145,86 @@ const RoleMaster = () => {
                         Sr.No
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Role Name
+                        First Name
                       </th>
                       <th scope="col" style={headerCellStyle}>
-                        Description
+                        Last Name
                       </th>
-                      {/* <th scope="col" style={headerCellStyle}>
-                        No of Users
-                      </th> */}
-                      {/* <th scope="col" style={headerCellStyle}>
-                        Module
-                      </th> */}
                       <th scope="col" style={headerCellStyle}>
-                        Menu Name
+                        Email Id
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Mobile No
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        School Name
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Address
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        City
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        State
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Pincode
                       </th>
                       <th scope="col" style={headerCellStyle}>
                         Status
                       </th>
-                      <th scope="col" style={headerCellStyle}>
+                      <th scope="col" style={{ ...headerCellStyle, paddingLeft: "18px" }}>
                         Action
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentItems.map((data, index) => (
-                      <tr key={data.r_id}>
+                      <tr key={data.Id}>
                         <td>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
-                        <td>{data.r_rolename}</td>
-                        <td>{data.r_description}</td>
-                        {/* <td>{data.r_no_of_user}</td> */}
-                        {/* <td>{data.r_module}</td> */}
-                        <td>{data.m_menuname}</td>
-                        <td>{data.r_isactive}</td>
+                        <td>{data.FisrtName}</td>
+                        <td>{data.LastName}</td>
+                        <td>{data.EmailId}</td>
+                        <td>{data.MobileNo}</td>
+                        <td>{data.ChildName}</td>
+                        <td>{data.Address}</td>
+                        <td>{data.City}</td>
+                        <td>{data.State}</td>
+                        <td>{data.PinCode}</td>
+                        <td>{data.Isactive === "1" ? "Active" : "Inactive"}</td>
                         <td>
-                          <div className="d-flex justify-content-between"><Edit
+                          <div className="d-flex "><Edit
                             className="text-success mr-2"
                             type="button"
-                            // onClick={() => GetRoleMaster(data.r_id)}
-                            style={{
+                            // onClick={() => GetDutyMaster(data.d_id)}
+                            // style={{
 
-                              ...(data.r_isactive === "Inactive" && {
-                                opacity: 0.5,  // Makes the icon appear faded
-                                cursor: "not-allowed", // Changes cursor to indicate disabled state
-                              }),
-                            }}
-                            onClick={data.r_isactive === "Inactive" ? null : () => GetRoleMaster(data.r_id)}
+                            //   ...(data.d_isactive === "Inactive" && {
+                            //     opacity: 0.5, 
+                            //     cursor: "not-allowed",
+                            //   }),
+                            // }}
+                            onClick={() => getParentData(data.Id)}
+                          // onClick={data.d_isactive === "Inactive" ? null : () => GetDutyMaster(data.d_id)}
+
                           />
                             <Delete
                               className="text-danger"
                               type="button"
-
-                              // onClick={() => handleDelete(data.r_id)}
-                              style={{
-                                marginLeft: "0.5rem",
-                                ...(data.r_isactive === "Inactive" && {
-                                  opacity: 0.5,  // Makes the icon appear faded
-                                  cursor: "not-allowed", // Changes cursor to indicate disabled state
-                                }),
-                              }}
-                              onClick={data.r_isactive === "Inactive" ? null : () => handleDelete(data.r_id)}
+                              // style={{ marginLeft: "0.5rem" }}
+                              // onClick={() => handleDelete(data.d_id)}
+                              // style={{
+                              //   marginLeft: "0.5rem",
+                              //   ...(data.d_isactive === "Inactive" && {
+                              //     opacity: 0.5,  
+                              //     cursor: "not-allowed", 
+                              //   }),
+                              // }}
+                              onClick={() => DeleteParentData(data.Id)}
+                            // onClick={data.d_isactive === "Inactive" ? null : () => handleDelete(data.d_id)}
                             /> </div>
 
                         </td>
@@ -249,21 +233,22 @@ const RoleMaster = () => {
                   </tbody>
                 </Table>
                 <div className="row mt-4 mt-xl-3">
-                  <div className="col-lg-4 col-12 ">
-                    <h6 className="text-lg-start text-center">
+                  <div className="col-lg-4 col-md-4 col-12 ">
+                    <h6 className="text-lg-start text-md-start text-center">
                       Showing {indexOfFirstItem + 1} to{" "}
-                      {Math.min(indexOfLastItem, allRoleMaster.length)} of{" "}
-                      {allRoleMaster.length} entries
+                      {Math.min(indexOfLastItem, allParent.length)} of{" "}
+                      {allParent.length} entries
                     </h6>
                   </div>
-                  <div className="col-lg-4 col-12"></div>
-                  <div className="col-lg-4 col-12 mt-3 mt-lg-0">
+                  <div className="col-lg-4 col-md-4 col-12"></div>
+                  <div className="col-lg-4 col-md-4 col-12 mt-3 mt-lg-0 mt-md-0">
                     <Pagination
                       currentPage={currentPage}
                       setCurrentPage={setCurrentPage}
-                      allData={allRoleMaster}
+                      allData={allParent}
                       itemsPerPage={itemsPerPage}
                     />
+
                   </div>
                 </div>
               </div>
@@ -276,4 +261,4 @@ const RoleMaster = () => {
   );
 };
 
-export default RoleMaster;
+export default PrincipalMaster;

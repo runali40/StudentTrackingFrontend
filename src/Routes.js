@@ -24,10 +24,13 @@ import ParentMaster from './Pages/Master/ParentMaster/ParentMaster';
 import ParentMasterForm from './Pages/Master/ParentMaster/ParentMasterForm';
 import StateMaster from './Pages/Master/ParameterMaster/StateMaster';
 import CityMaster from './Pages/Master/ParameterMaster/CityMaster';
+import PrincipalMaster from './Pages/Master/PrincipalMaster/PrincipalMaster';
+import PrincipalMasterForm from './Pages/Master/PrincipalMaster/PrincipalMasterForm';
+import LocationHistory from './Pages/LocationHistory/LocationHistory';
 
 const routes = [
     { path: '/', exact: true, name: 'Login', element: Login },
-    { path: '/', exact: true, name: 'HomePage', element:HomePage },
+    { path: '/', exact: true, name: 'HomePage', element: HomePage },
     { path: '/dashboard', exact: true, name: 'Dashboard', element: HomePage },
     { path: '/userMaster', name: 'User Master', element: UserMaster },
     { path: '/roleMaster', name: 'Role Master', element: RoleMaster },
@@ -49,7 +52,10 @@ const routes = [
     { path: '/scheduleMaster', name: 'ScheduleMaster', element: ScheduleMaster },
     { path: '/omrUpload1', name: 'OmrUpload1', element: OmrUpload1 },
     { path: '/studentMaster', name: 'Student Master', element: StudentMaster },
-     { path: '/parentMaster', name: 'Parent Master', element: ParentMaster },
-     { path: '/parentMasterForm', name: 'Parent Master Form', element: ParentMasterForm },
+    { path: '/parentMaster', name: 'Parent Master', element: ParentMaster },
+    { path: '/parentMasterForm', name: 'Parent Master Form', element: ParentMasterForm },
+    { path: '/principalMaster', name: 'Principal Form', element: PrincipalMaster },
+    { path: '/principalMasterForm', name: 'Principal Master Form', element: PrincipalMasterForm },
+    { path: '/locationHistory', name: 'Location History', element: LocationHistory },
 ]
 export default routes

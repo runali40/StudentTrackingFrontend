@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ErrorHandler from "../ErrorHandler";
 
 
-export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, navigate) => {
+export const AddPrincipalApi = (firstName, lastName, emailId, mobileNo, schoolName, schoolAddress, city, state, pincode, pId, roleName, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,
@@ -14,13 +14,13 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
         lastName: lastName,
         emailId: emailId,
         mobileNo: mobileNo,
-        address: address,
+        address: schoolAddress,
         aadharNo: "",
         city: city.value,
         state: state.value,
         country: "",
         pinCode: pincode,
-        childName: studentName.value,
+        schoolName: schoolName,
         roleName : roleName.value
 
     };
@@ -62,7 +62,7 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
         });
 };
 
-export const getAllParentApi = (navigate) => {
+export const getAllPrincipalApi = (navigate) => {
     const userId = localStorage.getItem('userId');
     const params = {
         userId: userId,
@@ -97,7 +97,7 @@ export const getAllParentApi = (navigate) => {
         });
 };
 
-export const getParentApi = (parentId, navigate) => {
+export const getPrincipalApi = (parentId, navigate) => {
     const userId = localStorage.getItem('userId');
     const params = {
         userId: userId,
@@ -133,7 +133,7 @@ export const getParentApi = (parentId, navigate) => {
         });
 };
 
-export const deleteParentApi = (parentId, navigate) => {
+export const deletePrincipalApi = (parentId, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../Components/Utils/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deleteParentIdApi, getAllParentApi } from "../../../Components/Api/ParentMasterApi";
+import { deleteParentApi, getAllParentApi } from "../../../Components/Api/ParentMasterApi";
 
 const ParentMaster = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const ParentMaster = () => {
   };
 
   const DeleteParentData = async (parentId) => {
-    const data = await deleteParentIdApi(parentId, navigate);
+    const data = await deleteParentApi(parentId, navigate);
     console.log(data)
     getAllParent();
   }
@@ -98,7 +98,8 @@ const ParentMaster = () => {
                       <button
                         className="btn btn-md text-light"
                         type="button"
-                        style={{ backgroundColor: "#1B5A90" }}
+                        // style={{ backgroundColor: "#1B5A90" }}
+                        style={headerCellStyle}
                         onClick={() => navigate("/parentMasterForm")}
                       >
                         <Add />
@@ -247,7 +248,6 @@ const ParentMaster = () => {
                       allData={allParent}
                       itemsPerPage={itemsPerPage}
                     />
-
                   </div>
                 </div>
               </div>
