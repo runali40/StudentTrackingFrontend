@@ -27,6 +27,7 @@ import CityMaster from './Pages/Master/ParameterMaster/CityMaster';
 import PrincipalMaster from './Pages/Master/PrincipalMaster/PrincipalMaster';
 import PrincipalMasterForm from './Pages/Master/PrincipalMaster/PrincipalMasterForm';
 import LocationHistory from './Pages/LocationHistory/LocationHistory';
+import GeofencingPage from './Pages/GeofencingPage/GeofencingPage';
 
 const routes = [
     { path: '/', exact: true, name: 'Login', element: Login },
@@ -57,5 +58,6 @@ const routes = [
     { path: '/principalMaster', name: 'Principal Form', element: PrincipalMaster },
     { path: '/principalMasterForm', name: 'Principal Master Form', element: PrincipalMasterForm },
     { path: '/locationHistory', name: 'Location History', element: LocationHistory },
+    { path: '/geofencingPage', name: 'Geofencing Page', element: GeofencingPage },
 ]
 export default routes

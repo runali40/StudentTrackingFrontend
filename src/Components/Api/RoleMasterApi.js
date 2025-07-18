@@ -42,7 +42,6 @@ export const deleteRoleMaster = (rId) => {
   const data = {
     UserId: UserId,
     r_id: rId,
-    r_recruitid: recruitId,
   };
   return apiClient({
     method: "post",

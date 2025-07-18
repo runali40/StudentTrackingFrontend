@@ -68,7 +68,7 @@ const ParentMasterForm = () => {
     setAllRole(options);
   };
 
-    const handleRoleName = (selected) => {
+  const handleRoleName = (selected) => {
     const selectedValue = selected;
     setRoleName(selectedValue);
   };
@@ -133,15 +133,28 @@ const ParentMasterForm = () => {
   const getParent = async () => {
     const data = await getParentApi(parentId, navigate);
     console.log(data)
-    setFirstName(data.FisrtName)
+    setFirstName(data.FirstName)
     setLastName(data.LastName)
     setEmailId(data.EmailId)
     setMobileNo(data.MobileNo)
-    setStudentName(data.ChildName)
+    setStudentName({
+      value: data.ChildName,
+      label: `${data.StudentName}`,
+    })
     setAddress(data.Address)
-    setCity(data.City)
-    setState(data.State)
+    setCity({
+      value: data.City,
+      label: `${data.CityName}`,
+    })
+    setState({
+      value: data.State,
+      label: `${data.StateName}`,
+    })
     setPincode(data.PinCode)
+    setRoleName({
+      value: data.RoleId,
+      label: `${data.r_rolename}`,
+    })
     setPId(data.Id)
   }
 

@@ -21,7 +21,7 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
         country: "",
         pinCode: pincode,
         childName: studentName.value,
-        roleName : roleName.value
+        roleId : roleName.value
 
     };
     if (pId !== null && pId !== "") {

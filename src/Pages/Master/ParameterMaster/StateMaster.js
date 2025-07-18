@@ -94,7 +94,7 @@ const StateMaster = () => {
       const filteredData = allState.filter(
         (state) =>
           state.s_code.toLowerCase().includes(searchDataValue) ||
-          state.s_stateName.toLowerCase().includes(searchDataValue)
+          state.s_Statename.toLowerCase().includes(searchDataValue)
       );
       setAllState(filteredData);
       setCurrentPage(1);

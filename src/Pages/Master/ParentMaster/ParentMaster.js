@@ -57,9 +57,9 @@ const ParentMaster = () => {
     } else {
       const filteredData = allParent.filter(
         (parent) =>
-          parent.FisrtName.toLowerCase().includes(searchDataValue) ||
+          parent.FirstName.toLowerCase().includes(searchDataValue) ||
           parent.LastName.toLowerCase().includes(searchDataValue) ||
-          parent.ChildName.toLowerCase().includes(searchDataValue)
+          parent.StudentName.toLowerCase().includes(searchDataValue)
       );
       setAllParent(filteredData);
       setCurrentPage(1);
@@ -185,16 +185,16 @@ const ParentMaster = () => {
                         <td>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
-                        <td>{data.FisrtName}</td>
+                        <td>{data.FirstName}</td>
                         <td>{data.LastName}</td>
                         <td>{data.EmailId}</td>
                         <td>{data.MobileNo}</td>
-                        <td>{data.ChildName}</td>
+                        <td>{data.StudentName}</td>
                         <td>{data.Address}</td>
-                        <td>{data.City}</td>
-                        <td>{data.State}</td>
+                        <td>{data.CityName}</td>
+                        <td>{data.StateName}</td>
                         <td>{data.PinCode}</td>
-                        <td>{data.Isactive === "1" ? "Active" : "Inactive"}</td>
+                        <td>{data.Isactive === true ? "Active" : "Inactive"}</td>
                         <td>
                           <div className="d-flex "><Edit
                             className="text-success mr-2"
