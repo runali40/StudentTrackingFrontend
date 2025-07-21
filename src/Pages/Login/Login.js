@@ -65,11 +65,11 @@ const Login = () => {
     localStorage.removeItem("recruitId")
     localStorage.removeItem("recConfId")
   }, [])
-  
+
 
   const Login = async () => {
     if (disabled) return;
-    
+
     if (!email || !password) {
       toast.warning("Please Enter Username and Password");
       return;
@@ -89,17 +89,13 @@ const Login = () => {
     try {
       const response = await axios.post(new URL(UrlData + 'Auth'), data);
       const result = response.data.result;
-      console.log(result.data,"92")
+      console.log(result.data, "92")
       // Store user data in localStorage
-      const roleId = result.data.RoleId ?? result.data.DutyId;
+      const roleId = result.data.r_id;
       localStorage.setItem("RoleId", roleId);
       localStorage.setItem("userId", result.data.UserId);
       localStorage.setItem("sessionid", result.outcome.sessionId);
-      localStorage.setItem("username", result.data.username);
-      localStorage.setItem("recruitId", result.data.RecruitId);
-      localStorage.setItem("recruitName", result.data.RecruitName);
-      localStorage.setItem("DutyName", result.data.DutyName);
-      localStorage.setItem("post", result.data.post);
+      localStorage.setItem("username", result.data.um_user_name);
       localStorage.setItem("RoleName", result.data.r_rolename);
 
       // Set token in cookies
@@ -107,7 +103,7 @@ const Login = () => {
       // Cookies.remove("UserCredential", { path: '/' });
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      const errorMessage = error.response?.status === 400 
+      const errorMessage = error.response?.status === 400
         ? "Username and Password both are Invalid!"
         : "Something went wrong!";
       toast.error(errorMessage);
@@ -198,7 +194,7 @@ const Login = () => {
                   onClick={() => { Login() }}
                   disabled={disabled}
                 >
-                   {disabled ? "Processing..." : "Login"}
+                  {disabled ? "Processing..." : "Login"}
                 </button>
 
               </div>
