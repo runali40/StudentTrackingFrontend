@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ErrorHandler from "../ErrorHandler";
 
 
-export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, navigate) => {
+export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, aadharNo, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,
@@ -21,7 +21,8 @@ export const AddParentApi = (firstName, lastName, emailId, mobileNo, studentName
         country: "",
         pinCode: pincode,
         childName: studentName.value,
-        roleId : roleName.value
+        roleId : roleName.value,
+        aadharNo : aadharNo
 
     };
     if (pId !== null && pId !== "") {

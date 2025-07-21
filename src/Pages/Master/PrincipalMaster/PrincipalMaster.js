@@ -38,11 +38,11 @@ const PrincipalMaster = () => {
     setCurrentPage(1);
   };
 
-  const getParentData = (principalId) => {
+  const getPrincipalData = (principalId) => {
     navigate('/principalMasterForm', { state: { principalId } });
   };
 
-  const DeleteParentData = async (principalId) => {
+  const DeletePrincipalData = async (principalId) => {
     const data = await deletePrincipalApi(principalId, navigate);
     console.log(data)
     getAllPrincipal();
@@ -172,6 +172,9 @@ const PrincipalMaster = () => {
                         Pincode
                       </th>
                       <th scope="col" style={headerCellStyle}>
+                        Role Name
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
                         Status
                       </th>
                       <th scope="col" style={{ ...headerCellStyle, paddingLeft: "18px" }}>
@@ -185,16 +188,17 @@ const PrincipalMaster = () => {
                         <td>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
-                        <td>{data.FisrtName}</td>
+                        <td>{data.FirstName}</td>
                         <td>{data.LastName}</td>
                         <td>{data.EmailId}</td>
                         <td>{data.MobileNo}</td>
-                        <td>{data.ChildName}</td>
-                        <td>{data.Address}</td>
-                        <td>{data.City}</td>
-                        <td>{data.State}</td>
+                        <td>{data.SchoolName}</td>
+                        <td>{data.SchoolAddress}</td>
+                        <td>{data.CityName}</td>
+                        <td>{data.StateName}</td>
                         <td>{data.PinCode}</td>
-                        <td>{data.Isactive === "1" ? "Active" : "Inactive"}</td>
+                        <td>{data.r_rolename}</td>
+                        <td>{data.Isactive === true ? "Active" : "Inactive"}</td>
                         <td>
                           <div className="d-flex "><Edit
                             className="text-success mr-2"
@@ -207,7 +211,7 @@ const PrincipalMaster = () => {
                             //     cursor: "not-allowed",
                             //   }),
                             // }}
-                            onClick={() => getParentData(data.Id)}
+                            onClick={() => getPrincipalData(data.Id)}
                           // onClick={data.d_isactive === "Inactive" ? null : () => GetDutyMaster(data.d_id)}
 
                           />
@@ -223,7 +227,7 @@ const PrincipalMaster = () => {
                               //     cursor: "not-allowed", 
                               //   }),
                               // }}
-                              onClick={() => DeleteParentData(data.Id)}
+                              onClick={() => DeletePrincipalData(data.Id)}
                             // onClick={data.d_isactive === "Inactive" ? null : () => handleDelete(data.d_id)}
                             /> </div>
 

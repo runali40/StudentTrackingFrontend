@@ -14,7 +14,7 @@ import { AddPrincipalApi, getPrincipalApi } from "../../../Components/Api/Princi
 const PrincipalMasterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { parentId } = location.state || {};
+  const { principalId } = location.state || {};
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [emailId, setEmailId] = useState("")
@@ -38,7 +38,7 @@ const PrincipalMasterForm = () => {
 
   useEffect(() => {
     getPrincipal();
-  }, [parentId]);
+  }, [principalId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,17 +109,27 @@ const PrincipalMasterForm = () => {
   }
 
   const getPrincipal = async () => {
-    const data = await getPrincipalApi(parentId, navigate);
+    const data = await getPrincipalApi(principalId, navigate);
     console.log(data)
-    setFirstName(data.FisrtName)
+    setFirstName(data.FirstName)
     setLastName(data.LastName)
     setEmailId(data.EmailId)
     setMobileNo(data.MobileNo)
-    setSchoolName(data.ChildName)
-    setSchoolAddress(data.schoolAddress)
-    setCity(data.City)
-    setState(data.State)
+    setSchoolName(data.SchoolName)
+    setSchoolAddress(data.SchoolAddress)
+   setCity({
+      value: data.City,
+      label: `${data.CityName}`,
+    })
+    setState({
+      value: data.State,
+      label: `${data.StateName}`,
+    })
     setPincode(data.PinCode)
+    setRoleName({
+      value: data.RoleId,
+      label: `${data.r_rolename}`,
+    })
     setPId(data.Id)
   }
 

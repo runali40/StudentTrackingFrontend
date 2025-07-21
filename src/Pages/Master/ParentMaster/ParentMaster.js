@@ -172,6 +172,12 @@ const ParentMaster = () => {
                         Pincode
                       </th>
                       <th scope="col" style={headerCellStyle}>
+                        Role Name
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
+                        Aadhar No
+                      </th>
+                      <th scope="col" style={headerCellStyle}>
                         Status
                       </th>
                       <th scope="col" style={{ ...headerCellStyle, paddingLeft: "18px" }}>
@@ -194,6 +200,8 @@ const ParentMaster = () => {
                         <td>{data.CityName}</td>
                         <td>{data.StateName}</td>
                         <td>{data.PinCode}</td>
+                        <td>{data.r_rolename}</td>
+                        <td>{data.Aadhar}</td>
                         <td>{data.Isactive === true ? "Active" : "Inactive"}</td>
                         <td>
                           <div className="d-flex "><Edit

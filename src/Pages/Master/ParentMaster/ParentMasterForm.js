@@ -27,6 +27,7 @@ const ParentMasterForm = () => {
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [pincode, setPincode] = useState("")
+  const [aadharNo, setAadharNo] = useState("")
   const [pId, setPId] = useState("")
   const [allStudent, setAllStudent] = useState([])
   const [allState, setAllState] = useState([])
@@ -125,7 +126,7 @@ const ParentMasterForm = () => {
   }
 
   const AddParentMaster = async () => {
-    const data = await AddParentApi(firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, navigate);
+    const data = await AddParentApi(firstName, lastName, emailId, mobileNo, studentName, address, city, state, pincode, pId, roleName, aadharNo, navigate);
     console.log(data)
     navigate("/parentMaster")
   }
@@ -150,7 +151,8 @@ const ParentMasterForm = () => {
       value: data.State,
       label: `${data.StateName}`,
     })
-    setPincode(data.PinCode)
+    setPincode(data.PinCode);
+    setAadharNo(data.Aadhar)
     setRoleName({
       value: data.RoleId,
       label: `${data.r_rolename}`,
@@ -397,6 +399,26 @@ const ParentMasterForm = () => {
                       />
                     </div>
                   </div>
+                </div>
+                <div className="row mt-4">
+                  <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 mt-0 mt-lg-0">
+                    <div className="form-group form-group-sm">
+                      <label className="control-label fw-bold">
+                        Aadhar Card No:
+                      </label>{" "}
+                      <span className="text-danger fw-bold">*</span>
+                      <input
+                        type="text"
+                        className="form-control mt-3"
+                        id="aadharNo"
+                        rows="2"
+                        placeholder="Enter Aadhar Card No"
+                        value={aadharNo}
+                        onChange={(e) => setAadharNo(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
                 </div>
                 <br />
               </div>

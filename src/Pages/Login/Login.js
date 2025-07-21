@@ -127,7 +127,7 @@ const Login = () => {
                 alt=""
               />
             </div>
-            <p className="text-white fs-2 fw-bold">Recruitment Software</p>
+            <p className="text-white fs-2 fw-bold">Student Tracking App</p>
             {/* <small
               className="text-white text-wrap text-center mt-5"
               style={{ width: "17rem" }}

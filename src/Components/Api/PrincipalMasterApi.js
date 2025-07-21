@@ -14,20 +14,20 @@ export const AddPrincipalApi = (firstName, lastName, emailId, mobileNo, schoolNa
         lastName: lastName,
         emailId: emailId,
         mobileNo: mobileNo,
-        address: schoolAddress,
+        schoolAddress: schoolAddress,
         aadharNo: "",
         city: city.value,
         state: state.value,
         country: "",
         pinCode: pincode,
         schoolName: schoolName,
-        roleName : roleName.value
+        roleId: roleName.value
 
     };
     if (pId !== null && pId !== "") {
         data.id = pId;
     }
-    const url = 'ParentMaster/InsertParent';
+    const url = 'PrincipleMaster/Insertprinciple';
     return apiClient({
         method: 'post',
         url: UrlData + url,
@@ -37,9 +37,9 @@ export const AddPrincipalApi = (firstName, lastName, emailId, mobileNo, schoolNa
             console.log('API response:', response);
             // toast.success("Parent added successfully!");
             if (data.id) {
-                toast.success("Parent updated successfully!");
+                toast.success("Principal updated successfully!");
             } else {
-                toast.success("Parent added successfully!");
+                toast.success("Principal added successfully!");
             }
             const token1 = response.data.outcome.tokens;
             Cookies.set("UserCredential", token1, { expires: 7 });
@@ -67,7 +67,7 @@ export const getAllPrincipalApi = (navigate) => {
     const params = {
         userId: userId,
     };
-    const url = 'ParentMaster/GetAllParent';
+    const url = 'PrincipleMaster/GetAllPrinciple';
     return apiClient({
         method: 'get',
         url: UrlData + url,
@@ -97,13 +97,13 @@ export const getAllPrincipalApi = (navigate) => {
         });
 };
 
-export const getPrincipalApi = (parentId, navigate) => {
+export const getPrincipalApi = (principalId, navigate) => {
     const userId = localStorage.getItem('userId');
     const params = {
         userId: userId,
-        Id: parentId,
+        Id: principalId,
     };
-    const url = 'ParentMaster/GetParent';
+    const url = 'PrincipleMaster/Getprinciple';
     return apiClient({
         method: 'get',
         url: UrlData + url,
@@ -133,13 +133,13 @@ export const getPrincipalApi = (parentId, navigate) => {
         });
 };
 
-export const deletePrincipalApi = (parentId, navigate) => {
+export const deletePrincipalApi = (principalId, navigate) => {
     const userId = localStorage.getItem('userId');
     const data = {
         userId: userId,
-        id: parentId,
+        id: principalId,
     };
-    const url = 'ParentMaster/Delete';
+    const url = 'PrincipleMaster/Delete';
     return apiClient({
         method: 'post',
         url: UrlData + url,
@@ -147,7 +147,7 @@ export const deletePrincipalApi = (parentId, navigate) => {
     })
         .then((response) => {
             console.log('delete API response:', response.data);
-            toast.success("Parent Deleted Successfully!")
+            toast.success("Principal Deleted Successfully!")
             const token1 = response.data.outcome.tokens;
             Cookies.set("UserCredential", token1, { expires: 7 });
             return response.data.data;
