@@ -5,8 +5,6 @@ import RoleMasterForm from './Pages/Master/RoleMaster/RoleMasterForm';
 import RoleMaster from './Pages/Master/RoleMaster/RoleMaster';
 import DutyMaster from './Pages/Master/DutyMaster/DutyMaster';
 import DutyMasterForm from './Pages/Master/DutyMaster/DutyMasterForm';
-import ParameterMaster from './Pages/Master/ParameterMaster/StateMaster';
-import ParameterValueMaster from './Pages/Master/ParameterMaster/CityMaster';
 import TableComponent from './Pages/DataTable';
 import DocumentMaster from './Pages/Master/DocumentMaster/DocumentMaster';
 import DocumentMasterForm from './Pages/Master/DocumentMaster/DocumentMasterForm';
@@ -28,6 +26,8 @@ import PrincipalMaster from './Pages/Master/PrincipalMaster/PrincipalMaster';
 import PrincipalMasterForm from './Pages/Master/PrincipalMaster/PrincipalMasterForm';
 import LocationHistory from './Pages/LocationHistory/LocationHistory';
 import GeofencingPage from './Pages/GeofencingPage/GeofencingPage';
+import GpsPage from './Pages/GpsPage/GpsPage';
+import GpsLocation from './Pages/GpsPage/GpsLocation';
 
 const routes = [
     { path: '/', exact: true, name: 'Login', element: Login },
@@ -59,5 +59,7 @@ const routes = [
     { path: '/principalMasterForm', name: 'Principal Master Form', element: PrincipalMasterForm },
     { path: '/locationHistory', name: 'Location History', element: LocationHistory },
     { path: '/geofencingPage', name: 'Geofencing Page', element: GeofencingPage },
+    { path: '/gpsPage', name: 'Gps Page', element: GpsPage },
+    { path: '/gpsLocation', name: 'Gps Location', element: GpsLocation },
 ]
 export default routes

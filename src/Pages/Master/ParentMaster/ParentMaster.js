@@ -6,6 +6,7 @@ import { Pagination } from "../../../Components/Utils/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { deleteParentApi, getAllParentApi } from "../../../Components/Api/ParentMasterApi";
+import { DeviceLocationAddress, DeviceLocationGetAll } from "../../../Components/Api/DeviceLocationApi";
 
 const ParentMaster = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const ParentMaster = () => {
 
   const getAllParent = async () => {
     const data = await getAllParentApi(navigate);
+    // const data = await DeviceLocationAddress(navigate)
+    // const data = await DeviceLocationGetAll(navigate)
     console.log(data)
     setAllParent(data)
   }

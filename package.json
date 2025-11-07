@@ -11,6 +11,7 @@
     "@mui/material": "^5.8.2",
     "@pdf-lib/fontkit": "^1.1.1",
     "@popperjs/core": "^2.11.5",
+    "@react-google-maps/api": "^2.20.7",
     "@serialport/parser-readline": "^13.0.0",
     "@syncfusion/ej2-react-dropdowns": "^25.2.7",
     "@testing-library/jest-dom": "^5.16.4",
@@ -44,6 +45,7 @@
     "jspdf-autotable": "^3.8.2",
     "jwt-decode": "^4.0.0",
     "jwt-encode": "^1.0.1",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.475.0",
     "mkdirp": "^3.0.1",
     "moment": "^2.29.4",
@@ -67,6 +69,7 @@
     "react-i18next": "^15.0.1",
     "react-input-mask": "^2.0.4",
     "react-js-pagination": "^3.0.3",
+    "react-leaflet": "^5.0.0",
     "react-paginate": "^8.1.3",
     "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
@@ -93,7 +96,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-
   "eslintConfig": {
     "extends": [
       "react-app",
